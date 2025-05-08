@@ -1,0 +1,648 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import logging\n",
+    "from azure.identity import DefaultAzureCredential\n",
+    "from azure.ai.documentintelligence import DocumentIntelligenceClient\n",
+    "from azure.ai.documentintelligence.models import AnalyzeResult\n",
+    "from src.interfaces.di_interface import DocIntInterface\n",
+    "import json\n",
+    "from datetime import datetime\n",
+    "import re\n",
+    "from azure.core.credentials import AzureKeyCredential"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "endpoint = \"https://trv-di-pru-iagarantias-001.cognitiveservices.azure.com/\"\n",
+    "credential = AzureKeyCredential(\"5zUCiMdRV1dAYM2Z21bD5Az47d2K3PEUCbVqtdTQ5UiWyzgMxt9iJQQJ99BBACYeBjFXJ3w3AAALACOGUFu1\")\n",
+    "document_intelligence_client = DocumentIntelligenceClient(endpoint, credential)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with open(\"C:\\\\Users\\\\Xnd0x\\\\Documents\\\\ISA\\\\801046433_2_CONF800101_20250425152655589.pdf\", \"rb\") as f:\n",
+    "    poller = document_intelligence_client.begin_classify_document(classifier_id=\"ClasificacionV2\",body=f)\n",
+    "classification_result = poller.result()\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "classification_result.documents[0][\"docType\"] == \"Confianza\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with open(\"C:\\\\Users\\\\Xnd0x\\\\Documents\\\\ISA\\\\801046433_2_CONF800101_20250425152655589.pdf\", \"rb\") as f:\n",
+    "    poller = document_intelligence_client.begin_analyze_document(model_id=\"CaratulasV8\", body=f,pages=1)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'running'"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "poller.status()\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "result: AnalyzeResult = poller.result()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def formatear_fecha(fecha_str):\n",
+    "    if not fecha_str:\n",
+    "        return \"01/01/2025\"\n",
+    "    formatos = [\"%d-%b-%Y\", \"%d-%m-%Y\", \"%d/%b/%Y\", \"%d/%m/%Y\", \"%d-%B-%Y\", \"%d/%B/%Y\",\"%Y/%m/%d\"]\n",
+    "    fecha = None\n",
+    "    for fmt in formatos:\n",
+    "        try:\n",
+    "            fecha = datetime.strptime(fecha_str, fmt)\n",
+    "            return fecha.strftime(\"%d/%m/%Y\")\n",
+    "        except ValueError:\n",
+    "            pass\n",
+    "    SPANISH_MONTHS = {\n",
+    "        # abreviaturas\n",
+    "        \"ENE\": \"01\", \"FEB\": \"02\", \"MAR\": \"03\", \"ABR\": \"04\", \"MAY\": \"05\", \"JUN\": \"06\",\n",
+    "        \"JUL\": \"07\", \"AGO\": \"08\", \"SEP\": \"09\", \"OCT\": \"10\", \"NOV\": \"11\", \"DIC\": \"12\",\n",
+    "        # nombres completos\n",
+    "        \"ENERO\": \"01\", \"FEBRERO\": \"02\", \"MARZO\": \"03\", \"ABRIL\": \"04\", \"MAYO\": \"05\", \"JUNIO\": \"06\",\n",
+    "        \"JULIO\": \"07\", \"AGOSTO\": \"08\", \"SEPTIEMBRE\": \"09\", \"OCTUBRE\": \"10\", \"NOVIEMBRE\": \"11\", \"DICIEMBRE\": \"12\",\n",
+    "    }\n",
+    "    cad = fecha_str.strip().upper()\n",
+    "    def _repl(match):\n",
+    "        mes_txt = match.group(0)\n",
+    "        return SPANISH_MONTHS.get(mes_txt, mes_txt)\n",
+    "    cad_num = re.sub(r'\\b[A-Z]{3,9}\\b', _repl, cad)\n",
+    "    formatos2 = [\"%d-%m-%Y\", \"%d/%m/%Y\"]\n",
+    "    for fmt in formatos2:\n",
+    "        try:\n",
+    "            fecha = datetime.strptime(cad_num, fmt)\n",
+    "            return fecha.strftime(\"%d/%m/%Y\")\n",
+    "        except ValueError:\n",
+    "            pass\n",
+    "\n",
+    "    # 4) Si aun así no podemos, devolvemos el valor por defecto\n",
+    "    return \"01/01/2025\"\n",
+    "        \n",
+    "        \n",
+    "def limpiar_contrato(contrato_str):\n",
+    "    if not contrato_str:\n",
+    "        return 0\n",
+    "    match = re.search(r'\\d{10,}', contrato_str)\n",
+    "    if match:\n",
+    "        return int(match.group())\n",
+    "    return 0\n",
+    "    \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "FIELD_MAP = {\n",
+    "        \"Nacional\": {\n",
+    "            \"amparos\":       \"AMPAROS\",\n",
+    "            \"desde\":         \"VIGENCIA DESDE\",\n",
+    "            \"hasta\":         \"VIGENCIA HASTA\",\n",
+    "            \"valor_prima\":   \"SUMA ASEGURADA\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "            \"contrato\":\"Contrato\",\n",
+    "            \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "        \"Bolivar\": {\n",
+    "            \"amparos\":       \"COBERTURA\",\n",
+    "            \"desde\":         \"DESDE\",\n",
+    "            \"hasta\":         \"HASTA\",\n",
+    "            \"valor_prima\":   \"VALOR ASEGURADO\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "                \"contrato\":\"Contrato\",\n",
+    "                \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "        \"Cesce\": {\n",
+    "            \"amparos\":       \"Coberturas\",\n",
+    "            \"desde\":         \"DESDE\",\n",
+    "            \"hasta\":         \"HASTA\",\n",
+    "            \"valor_prima\":   \"Valor\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "            \"contrato\":\"Contrato\",\n",
+    "            \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "        \"Chubb\": {\n",
+    "            \"amparos\":       \"Coberturas\",\n",
+    "            \"desde\":         \"Vig. Desde (YYYY/MM/DD)\",\n",
+    "            \"hasta\":         \"Vig. Hasta (YYYY/MM/DD)\",\n",
+    "            \"valor_prima\":   \"VLR. Asegurado\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "            \"contrato\":\"Contrato\",\n",
+    "            \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "        \n",
+    "            \"Confianza\": {\n",
+    "            \"amparos\":       \"Cobertura\",\n",
+    "            \"desde\":         \"Desde\",\n",
+    "            \"hasta\":         \"Hasta\",\n",
+    "            \"valor_prima\":   \"Valor\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "            \"contrato\":\"Contrato\",\n",
+    "            \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "        \"Solidaria\": {\n",
+    "            \"amparos\":       \"DESCRIPCION AMPAROS CONTRATO\",\n",
+    "            \"desde\":         \"VIGENCIA DESDE\",\n",
+    "            \"hasta\":         \"VIGENCIA HASTA\",\n",
+    "            \"valor_prima\":   \"SUMA ASEGURADA\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "            \"contrato\":\"Contrato\",\n",
+    "            \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "        \"Sura2\": {\n",
+    "            \"amparos\":       \"COBERTURA\",\n",
+    "            \"desde\":         \"FECHA INICIAL\",\n",
+    "            \"hasta\":         \"FECHA VENCIMIENTO\",\n",
+    "            \"valor_prima\":   \"VALOR ASEGURADO\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "            \"contrato\":\"Contrato\",\n",
+    "            \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "        \"Sura\": {\n",
+    "            \"amparos\":       \"Cobertura\",\n",
+    "            \"desde\":         \"FechaInicial\",\n",
+    "            \"hasta\":         \"FechaFinal\",\n",
+    "            \"valor_prima\":   \"Valor\",\n",
+    "            \"coberturas\":\"Coberturas\",\n",
+    "                \"contrato\":\"Contrato/Orden\",\n",
+    "            \"numeropoliza\":\"NumeroPoliza\",\n",
+    "            \"numeromodificacion\":\"NumeroModificacion\",\n",
+    "            \"aseguradora\":\"Aseguradora\",\n",
+    "            \"nombreproveedor\":\"NombreProveedor\",\n",
+    "            \"nitproveedor\":\"NitProveedor\",\n",
+    "            \"nombreasegurado\":\"NombreAsegurado\",\n",
+    "            \"nitasegurado\":\"NitAsegurado\",\n",
+    "            \"objetocaratula\":\"ObjetoCaratula\"\n",
+    "        },\n",
+    "    }\n",
+    "DEFAULT_MAPPING = FIELD_MAP[\"Sura\"]\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "output = {}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for doc in result.documents:\n",
+    "    if doc.fields is None:\n",
+    "        continue\n",
+    "    doctype = doc[\"docType\"]\n",
+    "    # Determino el mapeo a usar\n",
+    "    mapping = FIELD_MAP.get(doc[\"docType\"], DEFAULT_MAPPING)\n",
+    "\n",
+    "    # Primero, copio todos los campos que NO sean Coberturas\n",
+    "    for name, fv in doc.fields.items():\n",
+    "        if name != \"Coberturas\":\n",
+    "            output[name] = fv.content or \"\"\n",
+    "\n",
+    "    # Ahora, proceso el arreglo de Coberturas\n",
+    "    cob_array = doc.fields[mapping[\"coberturas\"]][\"valueArray\"]  \n",
+    "\n",
+    "\n",
+    "    cober_list = [\n",
+    "        item[\"valueObject\"][mapping[\"amparos\"]].get(\"valueString\",\"\")\n",
+    "        for item in cob_array\n",
+    "        if mapping[\"amparos\"] in item[\"valueObject\"]\n",
+    "    ]\n",
+    "    desde_list = [\n",
+    "        item[\"valueObject\"][mapping[\"desde\"]].get(\"valueString\",\"\")\n",
+    "        for item in cob_array\n",
+    "        if mapping[\"desde\"] in item[\"valueObject\"]\n",
+    "    ]\n",
+    "    hasta_list = [\n",
+    "        item[\"valueObject\"][mapping[\"hasta\"]].get(\"valueString\",\"\")\n",
+    "        for item in cob_array\n",
+    "        if mapping[\"hasta\"] in item[\"valueObject\"]\n",
+    "    ]\n",
+    "    valor_list = [\n",
+    "        item[\"valueObject\"][mapping[\"valor_prima\"]].get(\"valueString\",\"\")\n",
+    "        for item in cob_array\n",
+    "        if mapping[\"valor_prima\"] in item[\"valueObject\"]\n",
+    "    ]\n",
+    "    unique_rows = []\n",
+    "       # 2) Empaquetamos en tuplas fila a fila\n",
+    "    rows = list(zip(cober_list, desde_list, hasta_list, valor_list))\n",
+    "\n",
+    "    # 3) Filtramos duplicados preservando el primer encuentro\n",
+    "    seen = set()\n",
+    "    unique_rows = []\n",
+    "    for row in rows:\n",
+    "        if row not in seen:\n",
+    "            seen.add(row)\n",
+    "            unique_rows.append(row)\n",
+    "# 4) Desempaquetamos de nuevo en listas (o dejamos vacías si no quedó nada)\n",
+    "    if unique_rows:\n",
+    "        cober_u, desde_u, hasta_u, valor_u = zip(*unique_rows)\n",
+    "        output[\"coberturas\"]      = list(cober_u)\n",
+    "        output[\"fechas_iniciales\"]= list(desde_u)\n",
+    "        output[\"fechas_finales\"]  = list(hasta_u)\n",
+    "        output[\"valores_asegurados\"]= list(valor_u)\n",
+    "    else:\n",
+    "        output[\"coberturas\"]       = []\n",
+    "        output[\"fechas_iniciales\"] = []\n",
+    "        output[\"fechas_finales\"]   = []\n",
+    "        output[\"valores_asegurados\"]= []\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'NumeroPoliza': '801046433',\n",
+       " 'NombreProveedor': 'HMV INGENIEROS LIMITADA',\n",
+       " 'NitAsegurado': '900667590',\n",
+       " 'Moneda': 'PESOS',\n",
+       " 'Contrato': '4600004356',\n",
+       " 'Aseguradora': 'CONFIANZA',\n",
+       " 'NitProveedor': '860000656',\n",
+       " 'NombreAsegurado': 'ISA INTERCOLOMBIA S.A. E.S.P.',\n",
+       " 'ObjetoCaratula': 'AMPARAR EL PAGO DE LOS PERJUICIOS DERIVADOS DEL INCUMPLIMIENTO DE LAS OBLIGACIONES CONTENIDAS EN ELCONTRATO ABIERTO DE COMPRAVENTA, CONSTRUCCIÓN Y PRESTACIÓN\\nDE SERVICIOS DE SUBESTACIONES No. 4600004356 ORDEN DE ENTREGA 4510022044, CUYO OBJETO ES LA EJECUCIÓN DE DISEÑOS, SUMINISTRO DE BIENES, OBRA CIVIL, MONTAJE, PRUEBAS Y PUESTA EN SERVICIO ASOCIADOS A LA NUEVA SUBESTACIÓN CDS2 230 KV.',\n",
+       " 'coberturas': ['Cumplimiento',\n",
+       "  'Pago salarios, prestaciones sociales e indemnizaciones laborales',\n",
+       "  'Estabilidad de la obra',\n",
+       "  'Provision de repuestos y accesorios'],\n",
+       " 'fechas_iniciales': ['11-04-2025', '11-04-2025', '22-09-2026', '22-09-2026'],\n",
+       " 'fechas_finales': ['22-10-2026', '22-09-2029', '22-09-2031', '22-09-2031'],\n",
+       " 'valores_asegurados': ['3,837,960,996.40',\n",
+       "  '1,918,980,498.20',\n",
+       "  '3,837,960,996.40',\n",
+       "  '1,551,137,214.20']}"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "output"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "  # Limpieza de posibles valores None\n",
+    "for k, v in output.items():\n",
+    "    if isinstance(v, list):\n",
+    "        output[k] = [elem or \"\" for elem in v]\n",
+    "    else:\n",
+    "        output[k] = v or \"\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "monedas = []\n",
+    "nuevos_valores_asegurados = []"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "WARNING:root:Moneda strip PESOS\n",
+      "WARNING:root:Moneda strip PESOS\n",
+      "WARNING:root:Moneda strip PESOS\n",
+      "WARNING:root:Moneda strip PESOS\n"
+     ]
+    }
+   ],
+   "source": [
+    "for val in output.get('valores_asegurados',[]):\n",
+    "    moneda = output.get(f'Moneda', \"\")\n",
+    "    \n",
+    "    if val and \"$\" in val:\n",
+    "        partes = val.split(\"$\", 1)\n",
+    "        moneda = partes[0].strip() if partes[0].strip() != \"\" else \"COP\"\n",
+    "        valor_numerico = partes[1].strip()\n",
+    "        monedas.append(moneda)\n",
+    "        nuevos_valores_asegurados.append(valor_numerico)\n",
+    "    else:\n",
+    "        if val.strip() != \"\":\n",
+    "            nuevos_valores_asegurados.append(val.strip())\n",
+    "            logging.warning(f\"Moneda strip {moneda.strip()}\")\n",
+    "            if moneda and moneda.strip() != \"\":\n",
+    "                if(moneda.strip() == \"COL$\"):\n",
+    "                    monedas.append(\"COP\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"$US\"):\n",
+    "                    monedas.append(\"USD\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"PESOS\"):\n",
+    "                    monedas.append(\"COP\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"DOLARES\"):\n",
+    "                    monedas.append(\"USD\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"$\"):\n",
+    "                    monedas.append(\"COP\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"US$\"):\n",
+    "                    monedas.append(\"USD\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"US $\"):\n",
+    "                    monedas.append(\"USD\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"($-Pesos\"):\n",
+    "                    monedas.append(\"COP\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"($USA-Dolares\"):\n",
+    "                    monedas.append(\"USD\")\n",
+    "                    continue\n",
+    "                if(moneda.strip() == \"EUR$\"):\n",
+    "                    monedas.append(\"EUR\")\n",
+    "                    continue\n",
+    "                else:\n",
+    "                    monedas.append(\"COP\")\n",
+    "                    continue\n",
+    "            else:\n",
+    "                monedas.append(\"COP\")\n",
+    "        else:\n",
+    "            nuevos_valores_asegurados.append(\"\")\n",
+    "            monedas.append(\"\")\n",
+    "\n",
+    "# Se eliminan los campos específicos de coberturas del output general"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for i in range(1, 10):\n",
+    "    sufijo = \"\" if i == 1 else str(i)\n",
+    "    for campo in [f'Cobertura{sufijo}', f'FechaInicialCobertura{sufijo}', f'FechaFinalCobertura{sufijo}', f'ValorAseguradoMoneda{sufijo}']:\n",
+    "        if campo in output:\n",
+    "            output.pop(campo)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "WARNING:root:dctype Confianza\n",
+      "WARNING:root:map {'amparos': 'Cobertura', 'desde': 'Desde', 'hasta': 'Hasta', 'valor_prima': 'Valor', 'coberturas': 'Coberturas', 'contrato': 'Contrato', 'numeropoliza': 'NumeroPoliza', 'numeromodificacion': 'NumeroModificacion', 'aseguradora': 'Aseguradora', 'nombreproveedor': 'NombreProveedor', 'nitproveedor': 'NitProveedor', 'nombreasegurado': 'NombreAsegurado', 'nitasegurado': 'NitAsegurado', 'objetocaratula': 'ObjetoCaratula'}\n",
+      "WARNING:root:cantidad 4\n",
+      "WARNING:root:cantidad ['Cumplimiento', 'Pago salarios, prestaciones sociales e indemnizaciones laborales', 'Estabilidad de la obra', 'Provision de repuestos y accesorios']\n",
+      "WARNING:root:fechainicial ['11-04-2025', '11-04-2025', '22-09-2026', '22-09-2026']\n",
+      "WARNING:root:fechafinal ['11-04-2025', '11-04-2025', '22-09-2026', '22-09-2026']\n",
+      "WARNING:root:Valores : ['3,837,960,996.40', '1,918,980,498.20', '3,837,960,996.40', '1,551,137,214.20']\n",
+      "WARNING:root:Monedas : ['COP', 'COP', 'COP', 'COP']\n",
+      "WARNING:root:SETTING COBERTURAS\n",
+      "WARNING:root:SETTING fechas\n",
+      "WARNING:root:SETTING COBERTURAS\n",
+      "WARNING:root:SETTING fechas\n",
+      "WARNING:root:SETTING COBERTURAS\n",
+      "WARNING:root:SETTING fechas\n",
+      "WARNING:root:SETTING COBERTURAS\n",
+      "WARNING:root:SETTING fechas\n"
+     ]
+    }
+   ],
+   "source": [
+    "resultados = []\n",
+    "m = FIELD_MAP.get(doctype)\n",
+    "if not m:\n",
+    "    raise ValueError(f\"No existe configuración de campos para el doctype {doctype!r}\")\n",
+    "logging.warning(f\"dctype {doctype}\")\n",
+    "logging.warning(f\"map {m}\")\n",
+    "\n",
+    "# Obtener cantidad de coberturas encontradas (se asume que todas las listas tienen la misma longitud)\n",
+    "cantidad = len(output.get(\"coberturas\",[]))\n",
+    "logging.warning(f\"cantidad {cantidad}\")\n",
+    "logging.warning(f\"cantidad { output.get('coberturas',[]) }\")\n",
+    "logging.warning(f\"fechainicial {output.get('fechas_iniciales',[])}\")\n",
+    "logging.warning(f\"fechafinal {output.get('fechas_iniciales',[])}\")\n",
+    "\n",
+    "\n",
+    "logging.warning(f\"Valores : {nuevos_valores_asegurados}\")\n",
+    "logging.warning(f\"Monedas : {monedas}\")\n",
+    "for idx in range(cantidad):\n",
+    "    obj_cobertura = {}\n",
+    "    obj_cobertura[\"NumeroPóliza\"] = output.get(m[\"numeropoliza\"], \"\")\n",
+    "    obj_cobertura[\"NumeroModificación\"] = output.get(m[\"numeromodificacion\"], \"\")\n",
+    "    obj_cobertura[\"Aseguradora\"] = output.get(m[\"aseguradora\"], \"\")\n",
+    "    obj_cobertura[\"NombreProveedor\"] = output.get(m[\"nombreproveedor\"], \"\")\n",
+    "    obj_cobertura[\"NitProveedor\"] = output.get(m[\"nitproveedor\"], \"\")\n",
+    "    obj_cobertura[\"NombreAsegurado\"] = output.get(m[\"nombreasegurado\"], \"\")\n",
+    "    obj_cobertura[\"NitAsegurado\"] = output.get(m[\"nitasegurado\"], \"\")\n",
+    "    obj_cobertura[\"ObjetoCaratula\"] = output.get(m[\"objetocaratula\"], \"\")\n",
+    "    logging.warning(\"SETTING COBERTURAS\")\n",
+    "\n",
+    "    obj_cobertura[\"Cobertura\"] = output.get(\"coberturas\",[])[idx]\n",
+    "    logging.warning(\"SETTING fechas\")\n",
+    "    obj_cobertura[\"FechaInicialCobertura\"] = formatear_fecha(output.get('fechas_iniciales',[])[idx])\n",
+    "    obj_cobertura[\"FechaFinalCobertura\"] = formatear_fecha(output.get('fechas_finales',[])[idx])\n",
+    "\n",
+    "    \n",
+    "    obj_cobertura[\"ValorAsegurado\"] = nuevos_valores_asegurados[idx]\n",
+    "    obj_cobertura[\"Moneda\"] = monedas[idx]\n",
+    "\n",
+    "    obj_cobertura[\"ContratoOrden\"] = limpiar_contrato(output.get(m[\"contrato\"], \"\"))\n",
+    "    resultados.append(obj_cobertura)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "finaljson = json.dumps(resultados)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'[{\"NumeroP\\\\u00f3liza\": \"801046433\", \"NumeroModificaci\\\\u00f3n\": \"\", \"Aseguradora\": \"CONFIANZA\", \"NombreProveedor\": \"HMV INGENIEROS LIMITADA\", \"NitProveedor\": \"860000656\", \"NombreAsegurado\": \"ISA INTERCOLOMBIA S.A. E.S.P.\", \"NitAsegurado\": \"900667590\", \"ObjetoCaratula\": \"AMPARAR EL PAGO DE LOS PERJUICIOS DERIVADOS DEL INCUMPLIMIENTO DE LAS OBLIGACIONES CONTENIDAS EN ELCONTRATO ABIERTO DE COMPRAVENTA, CONSTRUCCI\\\\u00d3N Y PRESTACI\\\\u00d3N\\\\nDE SERVICIOS DE SUBESTACIONES No. 4600004356 ORDEN DE ENTREGA 4510022044, CUYO OBJETO ES LA EJECUCI\\\\u00d3N DE DISE\\\\u00d1OS, SUMINISTRO DE BIENES, OBRA CIVIL, MONTAJE, PRUEBAS Y PUESTA EN SERVICIO ASOCIADOS A LA NUEVA SUBESTACI\\\\u00d3N CDS2 230 KV.\", \"Cobertura\": \"Cumplimiento\", \"FechaInicialCobertura\": \"11/04/2025\", \"FechaFinalCobertura\": \"22/10/2026\", \"ValorAsegurado\": \"3,837,960,996.40\", \"Moneda\": \"COP\", \"ContratoOrden\": 4600004356}, {\"NumeroP\\\\u00f3liza\": \"801046433\", \"NumeroModificaci\\\\u00f3n\": \"\", \"Aseguradora\": \"CONFIANZA\", \"NombreProveedor\": \"HMV INGENIEROS LIMITADA\", \"NitProveedor\": \"860000656\", \"NombreAsegurado\": \"ISA INTERCOLOMBIA S.A. E.S.P.\", \"NitAsegurado\": \"900667590\", \"ObjetoCaratula\": \"AMPARAR EL PAGO DE LOS PERJUICIOS DERIVADOS DEL INCUMPLIMIENTO DE LAS OBLIGACIONES CONTENIDAS EN ELCONTRATO ABIERTO DE COMPRAVENTA, CONSTRUCCI\\\\u00d3N Y PRESTACI\\\\u00d3N\\\\nDE SERVICIOS DE SUBESTACIONES No. 4600004356 ORDEN DE ENTREGA 4510022044, CUYO OBJETO ES LA EJECUCI\\\\u00d3N DE DISE\\\\u00d1OS, SUMINISTRO DE BIENES, OBRA CIVIL, MONTAJE, PRUEBAS Y PUESTA EN SERVICIO ASOCIADOS A LA NUEVA SUBESTACI\\\\u00d3N CDS2 230 KV.\", \"Cobertura\": \"Pago salarios, prestaciones sociales e indemnizaciones laborales\", \"FechaInicialCobertura\": \"11/04/2025\", \"FechaFinalCobertura\": \"22/09/2029\", \"ValorAsegurado\": \"1,918,980,498.20\", \"Moneda\": \"COP\", \"ContratoOrden\": 4600004356}, {\"NumeroP\\\\u00f3liza\": \"801046433\", \"NumeroModificaci\\\\u00f3n\": \"\", \"Aseguradora\": \"CONFIANZA\", \"NombreProveedor\": \"HMV INGENIEROS LIMITADA\", \"NitProveedor\": \"860000656\", \"NombreAsegurado\": \"ISA INTERCOLOMBIA S.A. E.S.P.\", \"NitAsegurado\": \"900667590\", \"ObjetoCaratula\": \"AMPARAR EL PAGO DE LOS PERJUICIOS DERIVADOS DEL INCUMPLIMIENTO DE LAS OBLIGACIONES CONTENIDAS EN ELCONTRATO ABIERTO DE COMPRAVENTA, CONSTRUCCI\\\\u00d3N Y PRESTACI\\\\u00d3N\\\\nDE SERVICIOS DE SUBESTACIONES No. 4600004356 ORDEN DE ENTREGA 4510022044, CUYO OBJETO ES LA EJECUCI\\\\u00d3N DE DISE\\\\u00d1OS, SUMINISTRO DE BIENES, OBRA CIVIL, MONTAJE, PRUEBAS Y PUESTA EN SERVICIO ASOCIADOS A LA NUEVA SUBESTACI\\\\u00d3N CDS2 230 KV.\", \"Cobertura\": \"Estabilidad de la obra\", \"FechaInicialCobertura\": \"22/09/2026\", \"FechaFinalCobertura\": \"22/09/2031\", \"ValorAsegurado\": \"3,837,960,996.40\", \"Moneda\": \"COP\", \"ContratoOrden\": 4600004356}, {\"NumeroP\\\\u00f3liza\": \"801046433\", \"NumeroModificaci\\\\u00f3n\": \"\", \"Aseguradora\": \"CONFIANZA\", \"NombreProveedor\": \"HMV INGENIEROS LIMITADA\", \"NitProveedor\": \"860000656\", \"NombreAsegurado\": \"ISA INTERCOLOMBIA S.A. E.S.P.\", \"NitAsegurado\": \"900667590\", \"ObjetoCaratula\": \"AMPARAR EL PAGO DE LOS PERJUICIOS DERIVADOS DEL INCUMPLIMIENTO DE LAS OBLIGACIONES CONTENIDAS EN ELCONTRATO ABIERTO DE COMPRAVENTA, CONSTRUCCI\\\\u00d3N Y PRESTACI\\\\u00d3N\\\\nDE SERVICIOS DE SUBESTACIONES No. 4600004356 ORDEN DE ENTREGA 4510022044, CUYO OBJETO ES LA EJECUCI\\\\u00d3N DE DISE\\\\u00d1OS, SUMINISTRO DE BIENES, OBRA CIVIL, MONTAJE, PRUEBAS Y PUESTA EN SERVICIO ASOCIADOS A LA NUEVA SUBESTACI\\\\u00d3N CDS2 230 KV.\", \"Cobertura\": \"Provision de repuestos y accesorios\", \"FechaInicialCobertura\": \"22/09/2026\", \"FechaFinalCobertura\": \"22/09/2031\", \"ValorAsegurado\": \"1,551,137,214.20\", \"Moneda\": \"COP\", \"ContratoOrden\": 4600004356}]'"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "finaljson"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": ".venv",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.11"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

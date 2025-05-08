@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "DOC_INT_KEY":"5zUCiMdRV1dAYM2Z21bD5Az47d2K3PEUCbVqtdTQ5UiWyzgMxt9iJQQJ99BBACYeBjFXJ3w3AAALACOGUFu1",
+    "DOC_INT_ENDPOINT":"https://trv-di-pru-iagarantias-001.cognitiveservices.azure.com/"
+  }
+}
