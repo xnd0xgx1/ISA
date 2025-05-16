@@ -5,6 +5,9 @@ class DocIntInterface(ABC):
     def Process(self, filestream):
         pass
     @abstractmethod
+    def ProcessFase2(self, filestream):
+        pass
+    @abstractmethod
     def formatear_fecha(self,fecha_str):
         pass
     @abstractmethod

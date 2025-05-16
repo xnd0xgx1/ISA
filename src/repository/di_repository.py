@@ -6,7 +6,7 @@ from src.interfaces.di_interface import DocIntInterface
 import json
 from datetime import datetime
 import re
-# from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential
 
 
 class DocIntRepository(DocIntInterface):
@@ -14,7 +14,8 @@ class DocIntRepository(DocIntInterface):
    
 
     def __init__(self, doc_int_endpoint):
-        credential = DefaultAzureCredential()
+        # credential = DefaultAzureCredential()
+        credential = AzureKeyCredential("5zUCiMdRV1dAYM2Z21bD5Az47d2K3PEUCbVqtdTQ5UiWyzgMxt9iJQQJ99BBACYeBjFXJ3w3AAALACOGUFu1")
         self.client = DocumentIntelligenceClient(doc_int_endpoint, credential)
         
     def formatear_fecha(self,fecha_str):
@@ -406,6 +407,20 @@ class DocIntRepository(DocIntInterface):
             finaljson = json.dumps(resultados)
             logging.info(f"[DocIntRepository - process] - finalize: {finaljson}")
             return finaljson
+
+        except Exception as e:
+            logging.error(f"Error al ejecutar openai: {str(e)}")
+            raise ValueError(f"[DocIntRepository - process] - Error: {str(e)}")
+
+
+
+    def ProcessFase2(self, filestream):
+        try:
+            logging.info(f"[DocIntRepository - process] - initialize")
+
+            poller = self.client.begin_analyze_document(model_id="prebuilt-read",body=filestream,pages="1-30")
+            result: AnalyzeResult = poller.result()
+            return result.content
 
         except Exception as e:
             logging.error(f"Error al ejecutar openai: {str(e)}")
