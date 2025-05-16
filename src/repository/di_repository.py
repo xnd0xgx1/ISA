@@ -55,16 +55,26 @@ class DocIntRepository(DocIntInterface):
         return "01/01/2025"
         
         
-    def limpiar_contrato(self,contrato_str):
+    def limpiar_contrato(self, contrato_str):
         if not contrato_str:
             return 0
-        match = re.search(r'\d{10,}', contrato_str)
-        if match:
-            return int(match.group())
+
+        # Buscar todos los números de 10 dígitos o más
+        matches = re.findall(r'\d{10,}', contrato_str)
+        
+        if len(matches) >= 2:
+            # Verificar si el primero comienza por 15 o 46
+            if matches[0].startswith(('15', '46')):
+                return int(matches[1])
+            else:
+                return int(matches[0])
+        elif matches:
+            return int(matches[0])
+        
         return 0
     
 
-    def Process(self, filestream):
+    def Process(self, filestream,azure_oi):
         try:
             logging.info(f"[DocIntRepository - process] - initialize")
 
@@ -134,7 +144,7 @@ class DocIntRepository(DocIntInterface):
                     "objetocaratula":"ObjetoCaratula"
                 },
                 
-                 "Confianza": {
+                 "ConfianzaV3": {
                     "amparos":       "Cobertura",
                     "desde":         "Desde",
                     "hasta":         "Hasta",
@@ -209,7 +219,7 @@ class DocIntRepository(DocIntInterface):
             filestream.seek(0)
             if(classification_result.documents[0]["docType"] == "Confianza"):
                 logging.info("Starting extraction model")
-                poller = self.client.begin_analyze_document(model_id="CaratulasV8", body=filestream,pages=1)
+                poller = self.client.begin_analyze_document(model_id="ConfianzaV3", body=filestream,pages=1)
             else:
                 logging.info("Starting extraction model")
                 poller = self.client.begin_analyze_document(model_id="CaratulasV8", body=filestream)
@@ -380,6 +390,9 @@ class DocIntRepository(DocIntInterface):
 
             logging.warning(f"Valores : {nuevos_valores_asegurados}")
             logging.warning(f"Monedas : {monedas}")
+            resultsobjeto = azure_oi.ExtractObjeto(output.get(m["objetocaratula"], ""))
+            logging.warning(f"Respuesta obtenida del proceso: {resultsobjeto}")
+                
             for idx in range(cantidad):
                 obj_cobertura = {}
                 obj_cobertura["NumeroPóliza"] = output.get(m["numeropoliza"], "")
@@ -389,7 +402,7 @@ class DocIntRepository(DocIntInterface):
                 obj_cobertura["NitProveedor"] = output.get(m["nitproveedor"], "")
                 obj_cobertura["NombreAsegurado"] = output.get(m["nombreasegurado"], "")
                 obj_cobertura["NitAsegurado"] = output.get(m["nitasegurado"], "")
-                obj_cobertura["ObjetoCaratula"] = output.get(m["objetocaratula"], "")
+                obj_cobertura["ObjetoCaratula"] = resultsobjeto
                 logging.warning("SETTING COBERTURAS")
 
                 obj_cobertura["Cobertura"] = output.get("coberturas",[])[idx]
@@ -403,9 +416,11 @@ class DocIntRepository(DocIntInterface):
 
                 obj_cobertura["ContratoOrden"] = self.limpiar_contrato(output.get(m["contrato"], ""))
                 resultados.append(obj_cobertura)
-
+            
+           
             finaljson = json.dumps(resultados)
             logging.info(f"[DocIntRepository - process] - finalize: {finaljson}")
+
             return finaljson
 
         except Exception as e:

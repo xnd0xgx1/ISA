@@ -109,3 +109,24 @@ class AOIRepository(AOIInterface):
 
         data = json.loads(json_str)
         return json.dumps(data)
+    def ExtractObjeto(self,content):
+        logging.info(f"Content on AOI {content}")
+        response = self.client.chat.completions.create(
+            model='gpt-4o',
+            messages=[
+                {
+                    "role": "system",
+                    "content": """Necesito que me traigas UNICAMENTE el objeto de la garantia, que normalmente empieza despues de CUYO OBJETO, NO AGREGUES TEXTO NI CAMBIES EL CONTENIDO., Ejemplo:
+                    CUYO OBJETO ES EL OBJETO DEL CONTRATO ES LA PRESTACIÓN DE LOS SERVICIOS PARA LA
+EJECUCIÓN DEL MANTENIMIENTO DE LÍNEAS DE TRANSMISIÓN DE ENERGÍA Y FIBRA ÓPTICA Y DEMÁS SERVICIOS Y SUMINISTROS INHERENTES A ESTOS, BAJO LA
+MODALIDAD DE OUTSOURCING, EN EL TERRITORIO COLOMBIANO.
+                    """,
+                },
+                {
+                    "role": "user",
+                    "content": "Extrae el objeto de este contenido fuente: " + content,
+                }
+            ]
+        )
+        logging.warning(f"Respuesta del OPENAI: {response.choices[0].message.content}")
+        return  response.choices[0].message.content

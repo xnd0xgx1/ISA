@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+from src.interfaces.aoi_interface import AOIInterface
 
 class DocIntInterface(ABC):
     @abstractmethod
-    def Process(self, filestream):
+    def Process(self, filestream,azure_oi: AOIInterface):
         pass
     @abstractmethod
     def ProcessFase2(self, filestream):

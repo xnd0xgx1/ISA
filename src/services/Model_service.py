@@ -8,7 +8,7 @@ class ModelService:
         self.azure_oi = azure_oi
 
     def process(self,filestream):
-        result = self.azure_di.Process(filestream=filestream)
+        result = self.azure_di.Process(filestream=filestream,azure_oi=self.azure_oi)
         return result
     def processfase2(self,filestream):
         content = self.azure_di.ProcessFase2(filestream=filestream)
