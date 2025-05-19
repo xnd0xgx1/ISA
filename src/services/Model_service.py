@@ -23,7 +23,6 @@ class ModelService:
         content = self.azure_di.ProcessFase2(filestream=file1)
         content2 = self.azure_di.ProcessFase2(filestream=file2)
         contenidoFinal = f"Contenido1: {content}, Contenido2: {content2}"
-        logging.warning(f"Result initilializing AOI")
         result = self.azure_oi.Call(content=contenidoFinal)
         return result
 

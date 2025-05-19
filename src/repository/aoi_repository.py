@@ -17,7 +17,7 @@ class AOIRepository(AOIInterface):
             )
         
     def Call(self,content):
-        logging.info(f"Content on AOI {content}")
+        logging.error(f"Content on AOI")
         response = self.client.chat.completions.create(
             model='gpt-4',
             messages=[
@@ -98,15 +98,22 @@ class AOIRepository(AOIInterface):
                 }
             ]
         )
-        responseoai = response.choices[0].message.content.replace("json\n","")
-        logging.warning(f"Respuesta del openai: {responseoai}")
-        match = re.search(r'(\[.*\])', responseoai, re.S)
-        if not match:
-            return '[]'
-        json_str = match.group(1)
+        try:
+            responseoai = response.choices[0].message.content.replace("json\n","")
+            # logging.warning(f"Respuesta del openai: {responseoai}")
+            match = re.search(r'(\[.*\])', responseoai, re.S)
+            if not match:
+                return '[]'
+            json_str = match.group(1)
 
-        data = json.loads(json_str)
-        return json.dumps(data)
+            data = json.loads(json_str)
+            return json.dumps(data)
+        except json.JSONDecodeError as e:
+            logging.error(f"Error decoding JSON: {e}")
+            return '[]'
+        except Exception as e:
+            logging.error(f"Error processing response: {e}")
+            return '[]'
     def ExtractObjeto(self,content):
         logging.info(f"Content on AOI {content}")
         response = self.client.chat.completions.create(

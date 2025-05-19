@@ -15,7 +15,7 @@ stconn = os.environ["ST_ACOUNNT_URL"]
 azuredi = DocIntRepository(doc_int_endpoint=diendpoint)
 azure_oi = AOIRepository(oaiendpoint)
 azure_st = STRepository(stconn) 
-modelService = ModelService(azure_di=azuredi,azure_oi=azure_oi)
+modelService = ModelService(azure_di=azuredi,azure_oi=azure_oi,azure_st=azure_st)
 
 @app.route(route="ProcessDocument", methods=["POST"])
 def ProcessDocument(req: func.HttpRequest) -> func.HttpResponse:
