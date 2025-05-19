@@ -433,7 +433,7 @@ class DocIntRepository(DocIntInterface):
         try:
             logging.info(f"[DocIntRepository - process] - initialize")
 
-            poller = self.client.begin_analyze_document(model_id="prebuilt-read",body=filestream,pages="1-30")
+            poller = self.client.begin_analyze_document(model_id="prebuilt-read",body=filestream)
             result: AnalyzeResult = poller.result()
             return result.content
 
