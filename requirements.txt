@@ -6,3 +6,4 @@ azure-functions
 azure-ai-documentintelligence
 azure-identity
 openai
+azure-storage-blob

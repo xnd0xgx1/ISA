@@ -23,31 +23,29 @@ class AOIRepository(AOIInterface):
             messages=[
                 {
                     "role": "system",
-                    "content": """Eres un agente especializado en extracción de campos de contratos, debes extraer siempre los siguientes campos en un json, RETORNA SOLO JSON siempre en un formato válido sin añadir o modificar los nombres de los campos, Este es un ejemplo de formato (NO lo uses como contenido de respuesta): 
-                        [{
-                                "ContratoOrden": "",
-                                "ContratoMarco": "",
-                                "NitProveedor": "",
-                                "NombreProveedor": "",
-                                "Objeto": "",
-                                "GestionGarantiasDoc": false,
-                                "Cobertura": "",
-                                "DescripcionCobertura": "",
-                                "CoberturaPara": "",
-                                "PorcentajeCobertura": 0,
-                                "TextoTiempoAdicionalCobertura": "",
-                                "TiempoAdicionalCobertura": 0,
-                                "DescripcionValorDoc": "",
-                                "ValorDoc": 0,
-                                "Moneda": "",
-                                "PlazoVigenciaDoc": "",
-                                "PlazoDoc": 0,
-                                "FechaInicioCobertura": "",
-                                "FechaFinCobertura": "",
-                                "OrdenInicio": 0
-                                }]
+                    "content": """Eres un agente especializado en extracción de campos de contratos, debes extraer siempre los siguientes campos en un json, RETORNA SOLO JSON siempre en un formato válido sin añadir o modificar los nombres de los campos, Este es un ejemplo de formato (NO lo uses como contenido de respuesta),SIEMPRE DEBES TRAER AL MENOS UNA COBERTURA: 
+                        [{'ContratoOrden': 4620004842,
+                        'ContratoMarco': '4620004841',
+                        'NitProveedor': '901212206-9',
+                        'NombreProveedor': 'DATA KNOW S.A.S',
+                        'Objeto': 'Prestación de servicios de soporte, gestión, administración, monitoreo, mantenimiento y desarrollo de RPAs y analítica avanzada',
+                        'GestionGarantiasDoc': True,
+                        'Cobertura': 'Garantía de Cumplimiento',
+                        'DescripcionCobertura': 'Garantía que ampara las obligaciones del Contratista para cada orden de entrega, incluyendo los proyectos que superan 200 millones de pesos',
+                        'CoberturaPara': 'Contrato',
+                        'PorcentajeCobertura': 10,
+                        'TextoTiempoAdicionalCobertura': 'Vigente desde la firma de cada orden y hasta un (1) mes después de su finalización',
+                        'TiempoAdicionalCobertura': 1,
+                        'DescripcionValorDoc': 'El valor del contrato es indeterminado, pero determinable al vencimiento, basado en la sumatoria de órdenes de servicios liquidadas',
+                        'ValorDoc': 'INDETERMINADO',
+                        'Moneda': 'COP',
+                        'PlazoVigenciaDoc': '5 años desde la suscripción del contrato',
+                        'PlazoDoc': 60,
+                        'FechaInicioCobertura': '01/01/2025',
+                        'FechaFinCobertura': '30/01/2025',
+                        'OrdenInicio': 1}]
 
-                                debe ser un Objeto por cada cobertura, verifica bien el texto para identificar que si existan varias coberturas, 
+                                debe ser un Objeto del array por cada cobertura, verifica bien el texto para identificar que si existan varias coberturas, SIEMPRE EXISTE AL MENOS 1, 
                                 Descripción de campos para la extracción de datos de documentos contractuales:
                                 
                                 ContratoOrden: Número de 10 dígitos que se encuentra en el título del documento. En adjudicaciones, aparece después de "El número del Contrato es" y en órdenes de entrega, luego de "ORDEN DE ENTREGA No".
@@ -62,7 +60,7 @@ class AOIRepository(AOIInterface):
 
                                 GestionGarantiasDoc: Si en el documento se encuentra el título “GARANTÍAS, FIANZAS Y SEGUROS” y hay contenido debajo, se marca como “SI”; de lo contrario, se coloca “NO”.
 
-                                Cobertura: Se refiere a cada subtítulo listado después del título “GARANTÍAS, FIANZAS Y SEGUROS” o “GARANTÍAS Y SEGUROS”. Si es un contrato marco, se deben crear múltiples filas para cada cobertura listada.
+                                Coberturas: Se refiere a cada subtítulo listado después del título “GARANTÍAS, FIANZAS Y SEGUROS” o “GARANTÍAS Y SEGUROS”, PUEDE VARIAR LOS SUBTITULOS EMPIEZAN CON a) b), etc...
 
                                 DescripcionCobertura: Texto que detalla la cobertura, incluyendo fecha, porcentaje y beneficiario. En documentos marco, también se extrae desde la lista correspondiente.
 

@@ -3,6 +3,7 @@ import logging
 from src.services.Model_service import ModelService
 from src.repository.di_repository import DocIntRepository
 from src.repository.aoi_repository import AOIRepository
+from src.repository.st_repository import STRepository
 import os
 from io import BytesIO
 
@@ -10,8 +11,10 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 diendpoint = os.environ["DOC_INT_ENDPOINT"]
 oaiendpoint = os.environ["AOI_ENDPOINT"]
+stconn = os.environ["ST_ACOUNNT_URL"]
 azuredi = DocIntRepository(doc_int_endpoint=diendpoint)
 azure_oi = AOIRepository(oaiendpoint)
+azure_st = STRepository(stconn) 
 modelService = ModelService(azure_di=azuredi,azure_oi=azure_oi)
 
 @app.route(route="ProcessDocument", methods=["POST"])
@@ -42,41 +45,26 @@ def ProcessDocumentCaso2(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     try:
-        content_type = req.headers.get('Content-Type', '')
+       
 
-        # Soportar envíos multipart/form-data con dos archivos
-        if content_type.startswith('multipart/form-data'):
-            logging.info("[ProcessDocumentCaso2] - recibiendo múltiples archivos via form-data")
-
-            # req.files es un dict de FieldStorage
-            file1_field = req.files.get('file1')
-            file2_field = req.files.get('file2')
-
-            if not file1_field or not file2_field:
-                return func.HttpResponse(
-                    "Se deben enviar los campos 'file1' y 'file2'", 
-                    status_code=400
-                )
-
-            # # Leer contenido de cada archivo
-            file1_bytes = file1_field.stream.read()
-            file2_bytes = file2_field.stream.read()
-
-            # Convertir a BytesIO para procesar
-            file1_stream = BytesIO(file1_bytes)
-            file2_stream = BytesIO(file2_bytes)
-
-            # Llamar a servicio de procesamiento sobre ambos archivos
-            resultado = modelService.processfase2Autocompletado(file1_stream,file2_stream)
-
-            
-            return func.HttpResponse(resultado, status_code=200, mimetype="application/json")
-          
-        else:
+   
+         
+        contrato = req.params.get("contrato")
+        if not contrato:
             return func.HttpResponse(
-                "Tipo de contenido no soportado", 
+                "Se deben enviar el contrato", 
                 status_code=400
             )
+
+
+
+        # Llamar a servicio de procesamiento sobre ambos archivos
+        resultado = modelService.processfase2Autocompletado(contrato)
+
+        
+        return func.HttpResponse(resultado, status_code=200, mimetype="application/json")
+          
+    
 
     except Exception as e:
         logging.error(f"Error procesando el/los documento(s): {str(e)}")
