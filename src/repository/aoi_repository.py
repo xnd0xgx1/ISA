@@ -50,7 +50,7 @@ class AOIRepository(AOIInterface):
                                 debe ser un Objeto por cada cobertura, 
                                 Descripción de campos para la extracción de datos de documentos contractuales:
                                 
-                                Contrato/Orden: Número de 10 dígitos que se encuentra en el título del documento. En adjudicaciones, aparece después de "El número del Contrato es" y en órdenes de entrega, luego de "ORDEN DE ENTREGA No".
+                                ContratoOrden: Número de 10 dígitos que se encuentra en el título del documento. En adjudicaciones, aparece después de "El número del Contrato es" y en órdenes de entrega, luego de "ORDEN DE ENTREGA No".
 
                                 Contrato Marco: Campo opcional. En algunos casos, se puede encontrar después de "No CONTRATO" en órdenes de entrega.
 

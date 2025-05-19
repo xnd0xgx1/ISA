@@ -15,4 +15,12 @@ class ModelService:
         logging.warning(f"Result initilializing AOI")
         result = self.azure_oi.Call(content=content)
         return result
+    def processfase2Autocompletado(self,filestream1,filestream2):
+        content = self.azure_di.ProcessFase2(filestream=filestream1)
+        content2 = self.azure_di.ProcessFase2(filestream=filestream2)
+        contenidoFinal = f"Contenido1: {content}, Contenido2: {content2}"
+        logging.warning(f"Result initilializing AOI")
+        result = self.azure_oi.Call(content=contenidoFinal)
+        return result
+
     

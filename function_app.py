@@ -59,65 +59,19 @@ def ProcessDocumentCaso2(req: func.HttpRequest) -> func.HttpResponse:
                 )
 
             # # Leer contenido de cada archivo
-            # file1_bytes = file1_field.stream.read()
-            # file2_bytes = file2_field.stream.read()
+            file1_bytes = file1_field.stream.read()
+            file2_bytes = file2_field.stream.read()
 
-            # # Convertir a BytesIO para procesar
-            # file1_stream = BytesIO(file1_bytes)
-            # file2_stream = BytesIO(file2_bytes)
+            # Convertir a BytesIO para procesar
+            file1_stream = BytesIO(file1_bytes)
+            file2_stream = BytesIO(file2_bytes)
 
-            # # Llamar a servicio de procesamiento sobre ambos archivos
-            # result1 = modelService.process(file1_stream)
-            # result2 = modelService.process(file2_stream)
+            # Llamar a servicio de procesamiento sobre ambos archivos
+            resultado = modelService.processfase2Autocompletado(file1_stream,file2_stream)
 
-            # Construir respuesta JSON con resultados
-            import json
-            response_body = json.dumps([{'ContratoOrden': '4620004842',
-                'ContratoMarco': '4620004841',
-                'NitProveedor': '901212206-9',
-                'NombreProveedor': 'DATA KNOW S.A.S',
-                'Objeto': 'Prestación de servicios de soporte, gestión, administración, monitoreo, mantenimiento y desarrollo de RPAs y analítica avanzada',
-                'GestionGarantiasDoc': True,
-                'Cobertura': 'Garantía de Cumplimiento',
-                'DescripcionCobertura': 'Garantía que ampara las obligaciones del Contratista para cada orden de entrega, incluyendo los proyectos que superan 200 millones de pesos',
-                'CoberturaPara': 'Contrato',
-                'PorcentajeCobertura': 10,
-                'TextoTiempoAdicionalCobertura': 'Vigente desde la firma de cada orden y hasta un (1) mes después de su finalización',
-                'TiempoAdicionalCobertura': 1,
-                'DescripcionValorDoc': 'El valor del contrato es indeterminado, pero determinable al vencimiento, basado en la sumatoria de órdenes de servicios liquidadas',
-                'ValorDoc': 'INDETERMINADO',
-                'Moneda': 'COP',
-                'PlazoVigenciaDoc': '5 años desde la suscripción del contrato',
-                'PlazoDoc': 60,
-                'FechaInicioCobertura': '',
-                'FechaFinCobertura': '',
-                'OrdenInicio': 1},
-                {'ContratoOrden': '4620004842',
-                'ContratoMarco': '4620004841',
-                'NitProveedor': '901212206-9',
-                'NombreProveedor': 'DATA KNOW S.A.S',
-                'Objeto': 'Prestación de servicios de soporte, gestión, administración, monitoreo, mantenimiento y desarrollo de RPAs y analítica avanzada',
-                'GestionGarantiasDoc': True,
-                'Cobertura': 'Garantía de Pago de Salarios, Prestaciones Sociales e Indemnizaciones',
-                'DescripcionCobertura': 'Garantía que asegura el pago de salarios, prestaciones sociales e indemnizaciones del personal empleado, vigente hasta tres años después del fin del contrato',
-                'CoberturaPara': 'Contrato',
-                'PorcentajeCobertura': 10,
-                'TextoTiempoAdicionalCobertura': 'Vigente desde la firma de la garantía de cumplimiento y hasta tres (3) años después del plazo contractual',
-                'TiempoAdicionalCobertura': 36,
-                'DescripcionValorDoc': 'El valor del contrato es indeterminado, pero determinable al vencimiento, basado en la sumatoria de órdenes de servicios liquidadas',
-                'ValorDoc': 'INDETERMINADO',
-                'Moneda': 'COP',
-                'PlazoVigenciaDoc': '5 años desde la suscripción del contrato',
-                'PlazoDoc': 60,
-                'FechaInicioCobertura': '',
-                'FechaFinCobertura': '',
-                'OrdenInicio': 1}])
-
-            return func.HttpResponse(
-                response_body,
-                status_code=200,
-                mimetype="application/json"
-            )
+            
+            return func.HttpResponse(resultado, status_code=200, mimetype="application/json")
+          
         else:
             return func.HttpResponse(
                 "Tipo de contenido no soportado", 
