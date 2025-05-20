@@ -26,4 +26,35 @@ class ModelService:
         result = self.azure_oi.Call(content=contenidoFinal)
         return result
 
-    
+    def procesar_doble_json(self, json1, json2):
+        claves = [
+            "ContratoOrden",
+            "NombreProveedor",
+            "NitProveedor",
+            "Cobertura",
+            "ValorDoc",
+            "Moneda",
+            "PorcentajeCobertura",
+            "FechaInicioCobertura",
+            "FechaFinCobertura"
+        ]
+
+        resultado = []
+        
+        for json in json1:
+            cumple = False
+            for recibida in json2:
+                if all(
+                    str(json.get(clave, "")).strip() == str(recibida.get(clave, "")).strip()
+                    for clave in claves
+                ):
+                    cumple = True
+                    break
+
+            estado = "Cumple" if cumple else "No Cumple"
+            resultado.append({
+                **json,
+                "Estado": estado
+            })
+
+        return resultado
