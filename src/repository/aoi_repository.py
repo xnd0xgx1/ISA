@@ -12,7 +12,7 @@ class AOIRepository(AOIInterface):
     def __init__(self, endpoint):
         self.client = AzureOpenAI(
             api_key="9ZdC0OfiFYbjNGejuHcADRYqhpll2gUPd3OwradiqvsgNGSFkNNuJQQJ99BBACYeBjFXJ3w3AAABACOGmKlW",  
-            api_version="2024-10-21",
+            api_version="2024-12-01-preview",
             azure_endpoint = endpoint
             )
         
