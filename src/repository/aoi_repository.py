@@ -36,7 +36,7 @@ Los subtítulos de las coberturas pueden empezar con letras (a), b), c)...), gui
 Formato de salida esperado (ejemplo, no copiar literalmente):
 [
   {
-    "ContratoOrden": 4620004842,
+    "ContratoOrden": 4620004040,
     "ContratoMarco": "4620004841",
     "NitProveedor": "901212206-9",
     "NombreProveedor": "DATA KNOW S.A.S",
@@ -103,7 +103,7 @@ Tu salida debe ser un array con un objeto por cada cobertura encontrada en el do
     def ExtractObjeto(self,content):
         logging.info(f"Content on AOI {content}")
         response = self.client.chat.completions.create(
-            model='gpt-4o',
+            model='o3-mini',
             messages=[
                 {
                     "role": "system",
