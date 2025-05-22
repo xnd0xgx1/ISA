@@ -19,7 +19,7 @@ class AOIRepository(AOIInterface):
     def Call(self,content):
         logging.error(f"Content on AOI")
         response = self.client.chat.completions.create(
-            model='gpt-4',
+            model='o3-mini',
             messages=[
                 {
                     "role": "system",
@@ -61,22 +61,21 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
 
 Descripción de campos a extraer:
 - ContratoOrden: Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No".
-- ContratoMarco: Opcional. Puede aparecer como “Contrato Marco No”.
-- NitProveedor, NombreProveedor, Objeto: Extraer desde la lista `contratopolizagarantia` usando el número de ContratoOrden.
+- ContratoMarco: Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio.
+- NitProveedor, NombreProveedor, Objeto: Extraer desde la lista.
 - GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
-- Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento").
-- DescripcionCobertura: Todo el contenido textual asociado a esa cobertura.
+- Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes PersonalesGarantía de Calidad y Correcto Funcionamiento de los Equipos,).
+- DescripcionCobertura: Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
 - CoberturaPara: "Contrato" o "Orden", según el contexto del documento.
 - PorcentajeCobertura: Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura: Texto y valor numérico si hay un plazo adicional.
-- DescripcionValorDoc, ValorDoc, Moneda: Extraer del texto donde se hable del valor del contrato.
-- PlazoVigenciaDoc, PlazoDoc: Texto y duración del contrato en días.
-- FechaInicioCobertura: Formato dd/MM/yyyy.
-- FechaFinCobertura: Calcular si es posible; si no, dejar vacío.
+- TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura: Texto y valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
+- DescripcionValorDoc, ValorDoc, Moneda: Extraer del texto donde se hable del valor del contrato, en su caso traer el texto completo del valor.
+- PlazoVigenciaDoc, PlazoDoc: Texto y duración del contrato en días teniendo en cuenta el inicio del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).. y el fin de la cobertura asociada (debe ser calculado por la vigencia).
+- FechaInicioCobertura: Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
+- FechaFinCobertura:el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
 - OrdenInicio: 1 si se menciona “orden de inicio”; 0 si no.
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
-
                     """,
                 },
                 {
