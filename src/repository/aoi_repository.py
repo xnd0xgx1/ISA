@@ -49,7 +49,7 @@ Descripción de campos a extraer:
 - ContratoMarco: Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio.
 - NitProveedor, NombreProveedor, Objeto: Extraer desde la lista.
 - GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
-- Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes PersonalesGarantía de Calidad y Correcto Funcionamiento de los Equipos,).
+- Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes Personales,Garantía de Calidad y Correcto Funcionamiento de los Equipos,).
 - DescripcionCobertura: Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
 - CoberturaPara: "Contrato" o "Orden", según el contexto del documento.
 - PorcentajeCobertura: Extraído como número (ej. "10").
@@ -352,3 +352,38 @@ MODALIDAD DE OUTSOURCING, EN EL TERRITORIO COLOMBIANO.
                 return json.loads("{}")
         except Exception as e:
             return "ContratoMinuta"
+    def Revisar(self,content):
+        try:
+            logging.info(f"Content on AOI {content}")
+            response = self.client.chat.completions.create(
+                model='o3-mini',
+                messages=[
+                    {   
+                        "role": "system",
+                        "content": """Necesito que analices los json 1 y 2 con ello me arrojes un resultado si CUMPLE o NO CUMPLE, es una comparación de una garantia recibida vs requerida
+                        
+                        Cumple: Si todas las coberturas requeridas están presentes en Recibidas. 
+                        No Cumple: Si alguna cobertura requerida no está presente en Recibidas o difiere en algún valor en las columnas mencionadas en columnas claves: Número de Contrato/Orden, Nombre del Proveedor, NIT del proveedor, Cobertura, ValorDoc, Moneda, FechaInicioCobertura y FechaFinCobertura. 
+                        TEN PRESENTE QUE LAS COBERTURAS PUEDEN VARIAR UN POCO NO DEBEN DE SER EXACTAMENTE IGUALES, igual que los nombres de campos
+                        Si la cobertura varia poco ejemplo: garantia de cumplimiento y cumplimiento, estas deben ser validas
+                        Me debes retornar Unicamente el JSON, sin nada más, verifica que el resultado final sea un JSON válido:
+                        {"Cumple": true, "Motivo":<Motivo del porque cumple o no cumple>}
+                        """,
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Valida los siguientes json: {json.dumps(content)}",
+                    }
+                ]
+            )
+            logging.warning(f"Respuesta del OPENAI: {response.choices[0].message.content}")
+            responseoai = response.choices[0].message.content.replace("json\n","")
+            logging.warning(f"Respuesta del openai: {responseoai}")
+            cleaned = self.clean_json_string(responseoai)
+            logging.info(f"Cleaned: {cleaned}")
+            parsed = json.loads(cleaned)
+            return parsed
+         
+        except Exception as e:
+            logging.warning(f"ERROR: {e}")
+            return "{}"

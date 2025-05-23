@@ -116,26 +116,23 @@ def ProcessDocumentFase2(req: func.HttpRequest) -> func.HttpResponse:
         logging.error(f"Error procesando el documento: {str(e)}")
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)
 
-@app.route(route="ProcesarDobleJson", methods=["POST"])
+@app.route(route="Validar", methods=["POST"])
 def ProcesarDobleJson(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('[ProcesarDobleJson] Procesando solicitud con dos JSON.')
 
     try:
         req_body = req.get_json()
-        json1 = req_body.get("json1", [])
-        json2 = req_body.get("json2", [])
 
-        if not json1 or not json2:
+        if not req_body:
             return func.HttpResponse(
                 "Se deben enviar 'json1' y 'json2' como listas JSON.",
                 status_code=400
             )
 
         resultado = modelService.procesar_doble_json(
-            json1, json2
+           req_body
         )
 
-        import json
         return func.HttpResponse(
             json.dumps(resultado, ensure_ascii=False),
             status_code=200,

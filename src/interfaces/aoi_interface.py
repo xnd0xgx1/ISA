@@ -10,7 +10,9 @@ class AOIInterface(ABC):
     @abstractmethod
     def CallId(self, content):
         pass
-    
+    @abstractmethod
+    def Revisar(self, content):
+        pass
     @abstractmethod
     def clean_json_string(self, s):
         pass
