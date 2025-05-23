@@ -6,6 +6,7 @@ from src.repository.aoi_repository import AOIRepository
 from src.repository.st_repository import STRepository
 import os
 from io import BytesIO
+import json
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -46,18 +47,12 @@ def ProcessDocumentCaso2(req: func.HttpRequest) -> func.HttpResponse:
 
     try:
        
-
-   
-         
         contrato = req.params.get("contrato")
         if not contrato:
             return func.HttpResponse(
                 "Se deben enviar el contrato", 
                 status_code=400
             )
-
-
-
         # Llamar a servicio de procesamiento sobre ambos archivos
         resultado = modelService.processfase2Autocompletado(contrato)
 
@@ -70,26 +65,53 @@ def ProcessDocumentCaso2(req: func.HttpRequest) -> func.HttpResponse:
         logging.error(f"Error procesando el/los documento(s): {str(e)}")
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)
 
-
-
-@app.route(route="ProcessDocumentFase2", methods=["POST"])
-def ProcessDocumentFase2(req: func.HttpRequest) -> func.HttpResponse:
+@app.route(route="IdentificarDoc", methods=["POST"])
+def IdentificarDoc(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     try:
+        DocumentoCompras = req.params.get("DocumentoCompras")
         content_type = req.headers.get('Content-Type', '')
         if content_type == 'application/pdf':
             logging.info("[ProcessDocument] - recibiendo PDF como cuerpo binario")
             file_bytes = req.get_body()  # obtener el contenido binario del PDF
             file_stream = BytesIO(file_bytes)
-
-            # Procesar el archivo
-            result = modelService.processfase2(file_stream)
-
-            return func.HttpResponse(result, status_code=200, mimetype="application/json")
+            result = modelService.identificarDoc(file_stream,DocumentoCompras)
+            return func.HttpResponse(json.dumps(result), status_code=200, mimetype="application/json")
         else:
             return func.HttpResponse("Tipo de contenido no soportado", status_code=400)
 
+    except Exception as e:
+        logging.error(f"Error procesando el documento: {str(e)}")
+        return func.HttpResponse(f"Error: {str(e)}", status_code=500)
+
+@app.route(route="ProcessDocumentFase2", methods=["POST"])
+def ProcessDocumentFase2(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+    try:
+        DocumentoCompras = req.params.get("DocumentoCompras")
+        TipoDocumento = req.params.get("TipoDocumento")
+        
+        if not DocumentoCompras or not TipoDocumento:
+            return func.HttpResponse(
+                "Se deben enviar el DocumentoCompras y el TipoDocumento", 
+                status_code=400
+            )
+        
+        body = req.get_json()
+        if not isinstance(body, list):
+            return func.HttpResponse(
+                "El body debe ser un array de objetos", 
+                status_code=400
+            )
+
+        result = modelService.processfase2(DocumentoCompras,TipoDocumento,body)
+
+        return func.HttpResponse(
+            json.dumps(result), 
+            status_code=200, 
+            mimetype="application/json"
+        )
     except Exception as e:
         logging.error(f"Error procesando el documento: {str(e)}")
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)

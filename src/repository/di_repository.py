@@ -440,3 +440,17 @@ class DocIntRepository(DocIntInterface):
         except Exception as e:
             logging.error(f"Error al ejecutar openai: {str(e)}")
             raise ValueError(f"[DocIntRepository - process] - Error: {str(e)}")
+        
+    def GetFirstPage(self, filestream):
+        try:
+            logging.info(f"[DocIntRepository - process] - initialize")
+
+            poller = self.client.begin_analyze_document(model_id="prebuilt-read",body=filestream,pages="1")
+            result: AnalyzeResult = poller.result()
+            return result.content
+
+        except Exception as e:
+            logging.error(f"Error al ejecutar openai: {str(e)}")
+            raise ValueError(f"[DocIntRepository - process] - Error: {str(e)}")
+
+    

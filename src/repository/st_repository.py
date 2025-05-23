@@ -29,3 +29,14 @@ class STRepository(STInterface):
         blob_client = self.blob_service_client.get_blob_client(container=self.container_name, blob=document_name)
         blob_data = blob_client.download_blob()
         return blob_data.readall()
+    
+    def Save(self, document_path: str, content) -> str:
+        """
+        Guarda un documento en una ruta específica del contenedor de blobs.
+        """
+        # Se asume que document_path puede incluir subcarpetas como 'minutas/MinutaContrato.xlsx'
+        blob_client = self.blob_service_client.get_blob_client(container=self.container_name, blob=document_path)
+        blob_client.upload_blob(content, overwrite=True)
+        
+        return f"Blob '{document_path}' guardado correctamente."
+
