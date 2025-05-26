@@ -28,16 +28,42 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
     "Objeto": "",
     "GestionGarantiasDoc": true,
     "Cobertura": "Garantía de Cumplimiento",
-    "DescripcionCobertura": "...",
+    "DescripcionCobertura": "El CONTRATISTA se obliga a constituir a su costo y a favor de LA EMPRESA., 
+                    una garantía de cumplimiento del Contrato, expedida por una Compañía de 
+                    Seguros legalmente establecida en Colombia, y cuyas garantías hayan sido 
+                    puestas en depósito ante la Superintendencia Financiera de Colombia. La 
+                    garantía deberá ser para entidades particulares o entre particulares o en favor 
+                    de Empresas de Servicios Públicos (E.S.P.), y deberá tener anexa la 
+                    certificación de pago de la prima o el certificado que diga que la póliza no 
+                    expirará por falta de pago de prima expedida por la aseguradora. Mediante 
+                    esta garantía se amparan las obligaciones que contrae el CONTRATISTA por 
+                    la celebración del Contrato, y deberá estar vigente desde la firma del contrato 
+                    hasta la fecha de finalización del plazo contractual más un (1) mes, y por un 
+                    valor asegurado equivalente al veinte por ciento (20%) del valor estimado del 
+                    Contrato sin IVA.
+                    LA EMPRESA hará efectiva la garantía de cumplimiento cuando el 
+                    CONTRATISTA incumpla las condiciones contractuales pactadas.
+                    Esta Garantía TIENE que constituirse dentro de los seis (6) días hábiles 
+                    siguientes a la firma del Contrato.",
     "CoberturaPara": "Contrato",
     "PorcentajeCobertura": 10,
-    "TextoTiempoAdicionalCobertura": "...",
-    "TiempoAdicionalCobertura": "1 dia",
-    "DescripcionValorDoc": "...",
-    "ValorDoc": "INDETERMINADO",
+    "TextoTiempoAdicionalCobertura": "desde la firma del contrato 
+hasta la fecha de finalización del plazo contractual más un (1) mes",
+    "TiempoAdicionalCobertura": "1 mes",
+    "DescripcionValorDoc": "El valor estimado del Contrato es la suma de MIL QUINIENTOS CUARENTA 
+Y CINCO MILLONES DOSCIENTOS VEINTISÉIS MIL OCHOCIENTOS 
+TREINTA Y SEIS PESOS COLOMBIANOS (COP $1.545.226.836,00), pero 
+su valor real será el que resulte de la sumatoria de los productos que se 
+obtengan de multiplicar los ítems entregados por su precio unitario de 
+conformidad con lo estipulado en el Anexo 1 -Lista de Cantidades y Precios del contrato.
+",
+    "ValorDoc": "1545226836",
     "Moneda": "COP",
-    "PlazoVigenciaDoc": "El plazo de la vigencia de documento",
-    "PlazoDoc": "60 meses",
+    "PlazoVigenciaDoc": La vigencia para la ejecución del contrato será cinco (5) años, contados a partir de la 
+fecha señalada por LA EMPRESA en la orden de iniciación escrita en los mismos.
+La vigencia del contrato podrá ser modificada por acuerdo entre las partes mediante 
+Cláusula Adicional.",
+    "PlazoDoc": "5 años",
     "FechaInicioCobertura": "01/01/2025",
     "FechaFinCobertura": "30/01/2025",
     "OrdenInicio": 1
@@ -45,24 +71,24 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
 ]
 
 Descripción de campos a extraer:
-- ContratoOrden: Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No".
-- ContratoMarco: Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio.
-- NitProveedor, NombreProveedor, Objeto: Extraer desde la lista.
-- GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
-- Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes Personales,Garantía de Calidad y Correcto Funcionamiento de los Equipos,).
-- DescripcionCobertura: Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
-- CoberturaPara: "Contrato" o "Orden", según el contexto del documento.
-- PorcentajeCobertura: Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura: Texto si hay un plazo adicional
-- TiempoAdicionalCobertura: valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc:Texto ubicado despues de VALOR TRAE TODO EL CONTEXTO
-- ValorDoc: Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
--  Moneda: Si lo encuentras en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR.
-- PlazoVigenciaDoc: Texto ubicado en PLAZO  Texto ubicado despues de VIGENCIA Y PLAZO DEL CONTRATO / PLAZO, traer todo el texto asociado
-- PlazoDoc: Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
-- FechaInicioCobertura: Formato dd/MM/yyyy SIEMPRE esta como la marca de tiempo (fecha) de completado (del documento), ejemplo: en Completado\nSeguridad comprobada\n17/01/2025 la fecha seria 17/01/2025 NUNCA LO DEJES VACIO.
-- FechaFinCobertura: La fecha calculada del inicio de la cobertura más el plazoDoc.
-- OrdenInicio: 1 si se menciona “orden de inicio”; 0 si no.
+- ContratoOrden: Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No" //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
+- ContratoMarco: Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
+- NitProveedor, NombreProveedor, Objeto: Extraer desde la lista //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
+- GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
+- Cobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA, El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes Personales,Garantía de Calidad y Correcto Funcionamiento de los Equipos,).
+- DescripcionCobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA,  Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
+- CoberturaPara: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO "Contrato" o "Orden", según el contexto del documento.
+- PorcentajeCobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA, Extraído como número (ej. "10").
+- TextoTiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, Texto si hay un plazo adicional
+- TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
+- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Texto ubicado despues de VALOR TRAE TODO EL CONTEXTO
+- ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
+-  Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Si lo encuentras en letras traducirlo, si esta en valor se encuentra antes. SOLO TRAE ESTOS CASOS COP, USD, EUR.
+- PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Texto ubicado en PLAZO  Texto ubicado despues de VIGENCIA Y PLAZO DEL CONTRATO / PLAZO, traer todo el texto asociado
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
+- FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Formato dd/MM/yyyy SIEMPRE esta como la marca de tiempo (fecha) de completado (del documento), ejemplo: en Completado\nSeguridad comprobada\n17/01/2025 la fecha seria 17/01/2025 NUNCA LO DEJES VACIO.
+- FechaFinCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO La fecha calculada del inicio de la cobertura más el plazoDoc.
+- OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO 1 si se menciona “orden de inicio”; 0 si no.
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
                """
@@ -101,23 +127,23 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
 ]
 
 Descripción de campos a extraer:
-- ContratoOrden: Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No".
-- ContratoMarco: Numero de 10 digitos ubicado despues de "No CONTRATO".
-- NitProveedor, NombreProveedor, Objeto: Extraer desde la lista.
-- GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
-- Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes PersonalesGarantía de Calidad y Correcto Funcionamiento de los Equipos,).
-- DescripcionCobertura: Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
-- CoberturaPara:Orden
-- PorcentajeCobertura: Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura: Texto y valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc: ""
-- ValorDoc: Valor ubicado despues de VALOR ANTES DE IMPUESTOS (traerlo numerico)
-- Moneda: Texto ubicado despues de "MONEDA" (COP USD EUR)
-- PlazoVigenciaDoc: Texto despues de PLAZO DE LA ORDEN DE ENTREGA:
-- PlazoDoc: De Plazo/VigenciaDoc traer dato de plazo sea en dias, meses ó años; si no dejar vacio
-- FechaInicioCobertura: Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
-- FechaFinCobertura:el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
-- OrdenInicio: Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
+- ContratoOrden://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No".
+- ContratoMarco://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Numero de 10 digitos ubicado despues de "No CONTRATO".
+- NitProveedor, NombreProveedor, Objeto://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Extraer desde la lista.
+- GestionGarantiasDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS true si aparece el título de garantías y contenido debajo; false si no.
+- Cobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes PersonalesGarantía de Calidad y Correcto Funcionamiento de los Equipos,).
+- DescripcionCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
+- CoberturaPara://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Orden
+- PorcentajeCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Extraído como número (ej. "10").
+- TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Texto y valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
+- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS exto ubicado despues de El valor del Contrato es 
+- ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Valor ubicado despues de VALOR ANTES DE IMPUESTOS (traerlo numerico) ; si no colocar INDETERMINADO
+- Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de "MONEDA" (COP USD EUR)
+- PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto despues de PLAZO DE LA ORDEN DE ENTREGA:
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS De Plazo/VigenciaDoc traer dato de plazo sea en dias, meses ó años; si no dejar vacio
+- FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
+- FechaFinCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
+- OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
                """
@@ -133,12 +159,11 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
     "ContratoMarco": "4620004841",
     "GestionGarantiasDoc": true,
     "CoberturaPara": "Orden",
-  
     "DescripcionValorDoc": "...",
-    "ValorDoc": "INDETERMINADO",
+    "ValorDoc": "1233,11",
     "Moneda": "COP",
     "PlazoVigenciaDoc": "...",
-    "PlazoDoc": 60,
+    "PlazoDoc": 60 dias,
     "FechaInicioCobertura": "01/01/2025",
     "FechaFinCobertura": "30/01/2025",
     "OrdenInicio": 1
@@ -155,8 +180,8 @@ Descripción de campos a extraer:
 - Moneda: Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
 - PlazoVigenciaDoc: Texto despues del titulo VIGENCIA Y PLAZO (Traer todo el parrafo)
 - PlazoDoc: De Plazo/VigenciaDoc traer dato de plazo sea en dias, meses ó años; si no dejar vacio
-- FechaInicioCobertura: Fecha ubicada en "Resumen de eventos sobre / Completado" como marca de tiempo
-- FechaFinCobertura:el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
+- FechaInicioCobertura: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
+- FechaFinCobertura: el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
 - OrdenInicio: Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
 Tu salida debe ser un array con un objeto. No omitas ninguna.
@@ -198,24 +223,24 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
 ]
 
 Descripción de campos a extraer:
-- ContratoOrden: Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No".
-- ContratoMarco: Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio.
-- NitProveedor, NombreProveedor, Objeto: Extraer desde la lista.
+- ContratoOrden://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No".
+- ContratoMarco://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio.
+- NitProveedor, NombreProveedor, Objeto://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Extraer desde la lista.
 - GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
-- Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes PersonalesGarantía de Calidad y Correcto Funcionamiento de los Equipos,).
-- DescripcionCobertura: Texto donde se indique fecha, porcentaje de la cobertura y para quien, trae el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
-- CoberturaPara: "Contrato".
-- PorcentajeCobertura: Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura:Texto si hay un plazo adicional
-- TiempoAdicionalCobertura: valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc: Texto ubicado despues de El valor del Contrato es
-- ValorDoc: Traducir y traer de DescripcionValorDoc, si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
-- Moneda: Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
-- PlazoVigenciaDoc: Texto ubicado en PLAZO  "El plazo para la ejecución", traer todo el texto
-- PlazoDoc: Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
-- FechaInicioCobertura: Formato dd/MM/yyyy teniendo despues del titulo Enviado:.
-- FechaFinCobertura: el fin de la cobertura calcularlo segun el inicio del contrato mas el plazoDoc.
-- OrdenInicio: 1 si se menciona “orden de inicio”; 0 si no.
+- Cobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes PersonalesGarantía de Calidad y Correcto Funcionamiento de los Equipos,).
+- DescripcionCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Texto donde se indique fecha, porcentaje de la cobertura y para quien, trae el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
+- CoberturaPara://CAMPO GLOBAL PARA TODAS LAS COBERTURAS "Contrato".
+- PorcentajeCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Extraído como número (ej. "10").
+- TextoTiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURATexto si hay un plazo adicional
+- TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
+- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de El valor del Contrato es
+- ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Traducir y traer de DescripcionValorDoc, si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
+- Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
+- PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado en PLAZO  "El plazo para la ejecución", traer todo el texto
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
+- FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo despues del titulo Enviado:.
+- FechaFinCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS el fin de la cobertura calcularlo segun el inicio del contrato mas el plazoDoc.
+- OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS 1 si se menciona “orden de inicio”; 0 si no.
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
                     """
