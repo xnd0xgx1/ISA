@@ -53,11 +53,15 @@ Descripción de campos a extraer:
 - DescripcionCobertura: Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
 - CoberturaPara: "Contrato" o "Orden", según el contexto del documento.
 - PorcentajeCobertura: Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura: Texto y valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc, ValorDoc, Moneda: Extraer del texto donde se hable del valor del contrato, en su caso traer el texto completo del valor.
-- PlazoVigenciaDoc, PlazoDoc: Texto y duración del contrato en días teniendo en cuenta el inicio del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).. y el fin de la cobertura asociada (debe ser calculado por la vigencia).
-- FechaInicioCobertura: Formato dd/MM/yyyy Viene al final como la marca de tiempo de completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025 la fecha seria 17/01/2025.
-- FechaFinCobertura:el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
+- TextoTiempoAdicionalCobertura: Texto si hay un plazo adicional
+- TiempoAdicionalCobertura: valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
+- DescripcionValorDoc:Texto ubicado despues de VALOR TRAE TODO EL CONTEXTO
+- ValorDoc: Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
+-  Moneda: Si lo encuentras en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR.
+- PlazoVigenciaDoc: Texto ubicado en PLAZO  Texto ubicado despues de VIGENCIA Y PLAZO DEL CONTRATO / PLAZO, traer todo el texto asociado
+- PlazoDoc: Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
+- FechaInicioCobertura: Formato dd/MM/yyyy SIEMPRE esta como la marca de tiempo (fecha) de completado (del documento), ejemplo: en Completado\nSeguridad comprobada\n17/01/2025 la fecha seria 17/01/2025 NUNCA LO DEJES VACIO.
+- FechaFinCobertura: La fecha calculada del inicio de la cobertura más el plazoDoc.
 - OrdenInicio: 1 si se menciona “orden de inicio”; 0 si no.
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
@@ -181,12 +185,12 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
     "CoberturaPara": "Contrato",
     "PorcentajeCobertura": 10,
     "TextoTiempoAdicionalCobertura": "...",
-    "TiempoAdicionalCobertura": 1,
+    "TiempoAdicionalCobertura": 1 mes,
     "DescripcionValorDoc": "...",
     "ValorDoc": "INDETERMINADO",
     "Moneda": "COP",
     "PlazoVigenciaDoc": "...",
-    "PlazoDoc": 60,
+    "PlazoDoc": 60 meses,
     "FechaInicioCobertura": "01/01/2025",
     "FechaFinCobertura": "30/01/2025",
     "OrdenInicio": 1
@@ -199,14 +203,18 @@ Descripción de campos a extraer:
 - NitProveedor, NombreProveedor, Objeto: Extraer desde la lista.
 - GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
 - Cobertura: El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes PersonalesGarantía de Calidad y Correcto Funcionamiento de los Equipos,).
-- DescripcionCobertura: Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
-- CoberturaPara: "Contrato" o "Orden", según el contexto del documento.
+- DescripcionCobertura: Texto donde se indique fecha, porcentaje de la cobertura y para quien, trae el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
+- CoberturaPara: "Contrato".
 - PorcentajeCobertura: Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura: Texto y valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc, ValorDoc, Moneda: Extraer del texto donde se hable del valor del contrato, en su caso traer el texto completo del valor.
-- PlazoVigenciaDoc, PlazoDoc: Texto y duración del contrato en días teniendo en cuenta el inicio del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).. y el fin de la cobertura asociada (debe ser calculado por la vigencia).
-- FechaInicioCobertura: Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
-- FechaFinCobertura:el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
+- TextoTiempoAdicionalCobertura:Texto si hay un plazo adicional
+- TiempoAdicionalCobertura: valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
+- DescripcionValorDoc: Texto ubicado despues de El valor del Contrato es
+- ValorDoc: Traducir y traer de DescripcionValorDoc, si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
+- Moneda: Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
+- PlazoVigenciaDoc: Texto ubicado en PLAZO  "El plazo para la ejecución", traer todo el texto
+- PlazoDoc: Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
+- FechaInicioCobertura: Formato dd/MM/yyyy teniendo despues del titulo Enviado:.
+- FechaFinCobertura: el fin de la cobertura calcularlo segun el inicio del contrato mas el plazoDoc.
 - OrdenInicio: 1 si se menciona “orden de inicio”; 0 si no.
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
