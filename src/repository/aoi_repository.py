@@ -85,11 +85,12 @@ Descripción de campos a extraer:
 - ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 -  Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Si lo encuentras en letras traducirlo, si esta en valor se encuentra antes. SOLO TRAE ESTOS CASOS COP, USD, EUR.
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Texto ubicado en PLAZO  Texto ubicado despues de VIGENCIA Y PLAZO DEL CONTRATO / PLAZO, traer todo el texto asociado
-- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto, ejemplo si el texto menciona 3 años, traer 3 años
 - FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Formato dd/MM/yyyy SIEMPRE esta como la marca de tiempo (fecha) de completado (del documento), ejemplo: en Completado\nSeguridad comprobada\n17/01/2025 la fecha seria 17/01/2025 NUNCA LO DEJES VACIO.
 - FechaFinCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO La fecha calculada del inicio de la cobertura más el plazoDoc.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO 1 si se menciona “orden de inicio”; 0 si no.
 
+EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionCobertura,TextoTiempoAdicionalCobertura,DescripcionValorDoc,PlazoVigenciaDoc)
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
                """
     
@@ -119,7 +120,7 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
     "ValorDoc": "INDETERMINADO",
     "Moneda": "COP",
     "PlazoVigenciaDoc": "...",
-    "PlazoDoc": "",
+    "PlazoDoc": "1 año",
     "FechaInicioCobertura": "01/01/2025",
     "FechaFinCobertura": "30/01/2025",
     "OrdenInicio": 1
@@ -140,11 +141,12 @@ Descripción de campos a extraer:
 - ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Valor ubicado despues de VALOR ANTES DE IMPUESTOS (traerlo numerico) ; si no colocar INDETERMINADO
 - Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de "MONEDA" (COP USD EUR)
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto despues de PLAZO DE LA ORDEN DE ENTREGA:
-- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS De Plazo/VigenciaDoc traer dato de plazo sea en dias, meses ó años; si no dejar vacio
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS De Plazo/VigenciaDoc traer dato de plazo sea en dias, meses ó años; si no dejar vacio, ejemplo si el texto menciona 3 años, traer 3 años
 - FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
 - FechaFinCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
+EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionCobertura,TextoTiempoAdicionalCobertura,DescripcionValorDoc,PlazoVigenciaDoc)
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
                """
     promptSap = """
@@ -163,7 +165,7 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
     "ValorDoc": "1233,11",
     "Moneda": "COP",
     "PlazoVigenciaDoc": "...",
-    "PlazoDoc": 60 dias,
+    "PlazoDoc": "1 mes",
     "FechaInicioCobertura": "01/01/2025",
     "FechaFinCobertura": "30/01/2025",
     "OrdenInicio": 1
@@ -179,11 +181,12 @@ Descripción de campos a extraer:
 - ValorDoc:Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 - Moneda: Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
 - PlazoVigenciaDoc: Texto despues del titulo VIGENCIA Y PLAZO (Traer todo el parrafo)
-- PlazoDoc: De Plazo/VigenciaDoc traer dato de plazo sea en dias, meses ó años; si no dejar vacio
+- PlazoDoc: De Plazo/VigenciaDoc traer dato de plazo sea en dias, meses ó años; si no dejar vacio, ejemplo si el texto menciona 3 años, traer 3 años
 - FechaInicioCobertura: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
 - FechaFinCobertura: el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
 - OrdenInicio: Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
+EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionValorDoc,PlazoVigenciaDoc)
 Tu salida debe ser un array con un objeto. No omitas ninguna.
                """
     promptAutocontenido = """Eres un agente especializado en extracción de campos de contratos. Tu tarea es devolver SIEMPRE un arreglo de objetos JSON (uno por cada cobertura) con los siguientes campos. NO añadas comentarios ni ningún texto fuera del JSON. NO uses comillas simples. NO pongas comas en los valores numéricos.
@@ -209,13 +212,16 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
     "DescripcionCobertura": "...",
     "CoberturaPara": "Contrato",
     "PorcentajeCobertura": 10,
-    "TextoTiempoAdicionalCobertura": "...",
-    "TiempoAdicionalCobertura": 1 mes,
-    "DescripcionValorDoc": "...",
-    "ValorDoc": "INDETERMINADO",
+    "TextoTiempoAdicionalCobertura": "Su vigencia será de 2 años, después de la finalización del plazo contractual ",
+    "TiempoAdicionalCobertura": "1 mes",
+    "DescripcionValorDoc": "3. El valor del contrato es la suma de CUARENTA Y TRES MILLONES DE PESOS COLOMBIANOS
+(COP 43’000.000) El anterior valor no incluye el Impuesto sobre las Ventas (IVA). El valor acordado no es reajustable.
+",
+    "ValorDoc": "43000000",
     "Moneda": "COP",
-    "PlazoVigenciaDoc": "...",
-    "PlazoDoc": 60 meses,
+    "PlazoVigenciaDoc": "El plazo de ejecución es de cuatro (4) meses contados a partir de la fecha de emisión de la Orden de Iniciación. El plazo de ejecución
+podrá ser modificado mediante Acta suscrita por las dos (2) partes.",
+    "PlazoDoc": "60 meses",
     "FechaInicioCobertura": "01/01/2025",
     "FechaFinCobertura": "30/01/2025",
     "OrdenInicio": 1
@@ -231,14 +237,14 @@ Descripción de campos a extraer:
 - DescripcionCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Texto donde se indique fecha, porcentaje de la cobertura y para quien, trae el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
 - CoberturaPara://CAMPO GLOBAL PARA TODAS LAS COBERTURAS "Contrato".
 - PorcentajeCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURATexto si hay un plazo adicional
+- TextoTiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA ES el Texto si hay un plazo adicional, si hay plazo adicional TRAE TODO EL CONTENIDO DEL PLAZO ADICIONAL
 - TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de El valor del Contrato es
+- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de El valor del Contrato es, Trae todo el contexto NO CORTES EL PARRAFO
 - ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Traducir y traer de DescripcionValorDoc, si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 - Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
-- PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado en PLAZO  "El plazo para la ejecución", traer todo el texto
-- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto
-- FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo despues del titulo Enviado:.
+- PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de PLAZO  "El plazo para la ejecución", traer todo el texto asociado en ese parrafo, NO CORTES EL PARRAFO
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Transcirbe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto, ejemplo si el texto menciona 3 años, traer 3 años
+- FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo despues del titulo Enviado: SIEMPRE TRAE EL CAMPO!!.
 - FechaFinCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS el fin de la cobertura calcularlo segun el inicio del contrato mas el plazoDoc.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS 1 si se menciona “orden de inicio”; 0 si no.
 
