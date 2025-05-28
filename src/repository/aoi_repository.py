@@ -404,7 +404,8 @@ MODALIDAD DE OUTSOURCING, EN EL TERRITORIO COLOMBIANO.
                         Cumple: Si todas las coberturas requeridas están presentes en Recibidas. 
                         No Cumple: Si alguna cobertura requerida no está presente en Recibidas o difiere en algún valor en las columnas mencionadas en columnas claves: Número de Contrato/Orden, Nombre del Proveedor, NIT del proveedor, Cobertura, ValorDoc, Moneda, FechaInicioCobertura y FechaFinCobertura. 
                         TEN PRESENTE QUE LAS COBERTURAS PUEDEN VARIAR UN POCO NO DEBEN DE SER EXACTAMENTE IGUALES, igual que los nombres de campos
-                        Si la cobertura varia poco ejemplo: garantia de cumplimiento y cumplimiento, estas deben ser validas
+                        Si la cobertura varia poco ejemplo: garantia de cumplimiento y cumplimiento, estas deben ser validas.
+                        También ten en cuenta que si no se envían garantías requeridas, se debe considerar que no cumple.
                         Me debes retornar Unicamente el JSON, sin nada más, verifica que el resultado final sea un JSON válido:
                         {"Cumple": true, "Motivo":<Motivo del porque cumple o no cumple>}
                         """,
