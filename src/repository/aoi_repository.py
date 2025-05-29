@@ -401,7 +401,7 @@ MODALIDAD DE OUTSOURCING, EN EL TERRITORIO COLOMBIANO.
                         "role": "system",
                         "content": """Necesito que analices los json 1 y 2 con ello me arrojes un resultado si CUMPLE o NO CUMPLE, es una comparación de una garantia recibida vs requerida
                         
-                        Cumple: Si todas las coberturas requeridas están presentes en Recibidas. 
+                        Cumple: Si todas las coberturas requeridas están presentes en Recibidas. Te  en cuenta que es probable que el NitProveedor varien un poco dado que a veces se envían con guiones o el dígito de verificación, pero el nombre del proveedor debe ser el mismo.
                         No Cumple: Si alguna cobertura requerida no está presente en Recibidas o difiere en algún valor en las columnas mencionadas en columnas claves: Número de Contrato/Orden, Nombre del Proveedor, NIT del proveedor, Cobertura, ValorDoc, Moneda, FechaInicioCobertura y FechaFinCobertura. 
                         TEN PRESENTE QUE LAS COBERTURAS PUEDEN VARIAR UN POCO NO DEBEN DE SER EXACTAMENTE IGUALES, igual que los nombres de campos
                         Si la cobertura varia poco ejemplo: garantia de cumplimiento y cumplimiento, estas deben ser validas.
