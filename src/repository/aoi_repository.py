@@ -87,7 +87,7 @@ Descripción de campos a extraer:
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Texto ubicado en PLAZO  Texto ubicado despues de VIGENCIA Y PLAZO DEL CONTRATO / PLAZO, traer todo el texto asociado
 - PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Transcribe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto, ejemplo si el texto menciona 3 años, traer 3 años. Traer el dato de la fecha cuando se dice "para constitución de garantías" si no dejar vacío.
 - FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Formato dd/MM/yyyy SIEMPRE esta como la marca de tiempo (fecha) de completado (del documento), ejemplo: en Completado\nSeguridad comprobada\n17/01/2025 la fecha seria 17/01/2025 NUNCA LO DEJES VACIO.
-- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio más el plazoDoc y en caso de tener tiempoadicionalCobertura sumarlo!, SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
+- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el plazoDoc más el tiempo tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO 1 si se menciona “orden de inicio”; 0 si no.
 
 EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionCobertura,TextoTiempoAdicionalCobertura,DescripcionValorDoc,PlazoVigenciaDoc)
@@ -143,7 +143,7 @@ Descripción de campos a extraer:
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto despues de PLAZO DE LA ORDEN DE ENTREGA:
 - PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS De Plazo/VigenciaDoc traer dato de plazo sea en días, meses ó años; si no dejar vacio, ejemplo si el texto menciona 3 años, traer 3 años.
 - FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
-- FechaFinCobertura:INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio más el plazoDoc y en caso de tener tiempoadicionalCobertura sumaro!, SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
+- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el plazoDoc más el tiempo tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
 EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionCobertura,TextoTiempoAdicionalCobertura,DescripcionValorDoc,PlazoVigenciaDoc)
@@ -173,17 +173,17 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
 ]
 
 Descripción de campos a extraer:
-- ContratoOrden: Numero despues de: ORDEN DE ENTREGA/ORDEN DE SERVICIOS 
-- ContratoMarco: Si en el titulo principal encuentra el contrato (inicia con 46/15 y es de 10 digitos).
+- ContratoOrden: Numero después de: ORDEN DE ENTREGA/ORDEN DE SERVICIOS 
+- ContratoMarco: Si en el titulo principal encuentra el contrato (inicia con 46/15 y es de 10 dígitos).
 - GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
 - CoberturaPara: Orden
 - DescripcionValorDoc: Este campo debe devolverse vacío
-- ValorDoc:Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
+- ValorDoc: Ubicado después del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 - Moneda: Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
-- PlazoVigenciaDoc: Texto despues del titulo VIGENCIA Y PLAZO (Traer todo el parrafo)
+- PlazoVigenciaDoc: Texto después del titulo VIGENCIA Y PLAZO (Traer todo el párrafo)
 - PlazoDoc: Del campo PlazoVigenciaDoc traer dato de plazo sea en días, meses o años; si no dejar vacío, ejemplo si el texto menciona 3 años, traer 3 años.
 - FechaInicioCobertura: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
-- FechaFinCobertura: el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
+- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el plazoDoc más el tiempo tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy.
 - OrdenInicio: Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
 EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionValorDoc,PlazoVigenciaDoc)
@@ -245,7 +245,7 @@ Descripción de campos a extraer:
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de PLAZO  "El plazo para la ejecución", traer todo el texto asociado en ese parrafo, NO CORTES EL PARRAFO
 - PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Transcribe la duración del contrato en días teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto, ejemplo si el texto menciona 3 años, traer 3 años. Traer el dato de la fecha cuando se dice "para constitución de garantías" si no dejar vacío.
 - FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo despues del titulo Enviado: SIEMPRE TRAE EL CAMPO!!.
-- FechaFinCobertura://INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio más el plazoDoc y en caso de tener tiempoadicionalCobertura sumaro!, SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
+- FechaFinCobertura://INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el plazoDoc más el tiempo tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS 1 si se menciona “orden de inicio”; 0 si no.
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
