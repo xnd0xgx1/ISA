@@ -137,7 +137,7 @@ Descripción de campos a extraer:
 - CoberturaPara://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Orden
 - PorcentajeCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Extraído como número (ej. "10").
 - TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Texto y valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS exto ubicado despues de El valor del Contrato es 
+- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS texto ubicado despues de El valor del Contrato es 
 - ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Valor ubicado despues de VALOR ANTES DE IMPUESTOS (traerlo numerico) ; si no colocar INDETERMINADO
 - Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de "MONEDA" (COP USD EUR)
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto despues de PLAZO DE LA ORDEN DE ENTREGA:
@@ -177,11 +177,11 @@ Descripción de campos a extraer:
 - ContratoMarco: Si en el titulo principal encuentra el contrato (inicia con 46/15 y es de 10 digitos).
 - GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no.
 - CoberturaPara: Orden
-- DescripcionValorDoc:Texto en Titulo VALOR
+- DescripcionValorDoc: Este campo debe devolverse vacío
 - ValorDoc:Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 - Moneda: Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
 - PlazoVigenciaDoc: Texto despues del titulo VIGENCIA Y PLAZO (Traer todo el parrafo)
-- PlazoDoc: De Plazo/VigenciaDoc traer dato de plazo sea en días, meses ó años; si no dejar vacío, ejemplo si el texto menciona 3 años, traer 3 años
+- PlazoDoc: Del campo PlazoVigenciaDoc traer dato de plazo sea en días, meses o años; si no dejar vacío, ejemplo si el texto menciona 3 años, traer 3 años.
 - FechaInicioCobertura: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
 - FechaFinCobertura: el fin de la cobertura asociada (calcularlo segun la vigencia e inicio del contrato en formato fecha), si no, dejar vacío.
 - OrdenInicio: Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
