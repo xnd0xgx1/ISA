@@ -14,7 +14,8 @@ Eres un agente especializado en extracción de campos de contratos. Tu tarea es 
 - “GARANTÍAS, FIANZAS Y SEGUROS”
 - “GARANTÍAS Y SEGUROS”
 
-Los subtítulos de las coberturas pueden empezar con letras (a), b), c)...), guiones o incluso ser párrafos separados. DEBES detectar cada cobertura como un bloque de contenido que incluya descripción, porcentaje, duración, y beneficiario si está disponible. 
+Los subtítulos de las coberturas SIEMPRE deben detectarse incluso si no tienen número o letra explícita. Pueden empezar con una letra (a., b., c., etc.), con guion, mayúsculas, o directamente con frases como “El CONTRATISTA se obliga a…”, “El CONTRATISTA deberá…”, “El CONTRATISTA constituirá…”. Si un bloque describe una obligación de asegurar, garantizar, cubrir, o entregar póliza, se debe considerar una nueva cobertura. NO supongas que todas las coberturas tienen un subtítulo explícito. Si el contenido tiene estructura y descripción distintas, asume que es una cobertura separada. Seguido de la última cobertura, puede haber un título que empiece por "PARÁGRAFO".
+
 
 ⚠️ Si el texto tiene más de una cobertura, DEVUELVE cada una como un objeto separado dentro del array. NO omitas ninguna.
 
@@ -28,23 +29,7 @@ Formato de salida esperado (ejemplo, no copiar literalmente):
     "Objeto": "",
     "GestionGarantiasDoc": true,
     "Cobertura": "Garantía de Cumplimiento",
-    "DescripcionCobertura": "El CONTRATISTA se obliga a constituir a su costo y a favor de LA EMPRESA., 
-                    una garantía de cumplimiento del Contrato, expedida por una Compañía de 
-                    Seguros legalmente establecida en Colombia, y cuyas garantías hayan sido 
-                    puestas en depósito ante la Superintendencia Financiera de Colombia. La 
-                    garantía deberá ser para entidades particulares o entre particulares o en favor 
-                    de Empresas de Servicios Públicos (E.S.P.), y deberá tener anexa la 
-                    certificación de pago de la prima o el certificado que diga que la póliza no 
-                    expirará por falta de pago de prima expedida por la aseguradora. Mediante 
-                    esta garantía se amparan las obligaciones que contrae el CONTRATISTA por 
-                    la celebración del Contrato, y deberá estar vigente desde la firma del contrato 
-                    hasta la fecha de finalización del plazo contractual más un (1) mes, y por un 
-                    valor asegurado equivalente al veinte por ciento (20%) del valor estimado del 
-                    Contrato sin IVA.
-                    LA EMPRESA hará efectiva la garantía de cumplimiento cuando el 
-                    CONTRATISTA incumpla las condiciones contractuales pactadas.
-                    Esta Garantía TIENE que constituirse dentro de los seis (6) días hábiles 
-                    siguientes a la firma del Contrato.",
+    "DescripcionCobertura": "...",
     "CoberturaPara": "Contrato",
     "PorcentajeCobertura": 10,
     "TextoTiempoAdicionalCobertura": "desde la firma del contrato 
@@ -65,33 +50,34 @@ La vigencia del contrato podrá ser modificada por acuerdo entre las partes medi
 Cláusula Adicional.",
     "PlazoDoc": "5 años",
     "FechaInicioCobertura": "01/01/2025",
-    "FechaFinCobertura": "dd/MM/yyyy",
+    "FechaFinCobertura": "30/01/2025",
     "OrdenInicio": 1
   }
 ]
 
 Descripción de campos a extraer:
-- ContratoOrden: Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No" //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
-- ContratoMarco: Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
-- NitProveedor, NombreProveedor, Objeto: Extraer desde la lista //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
-- GestionGarantiasDoc: true si aparece el título de garantías y contenido debajo; false si no //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
-- Cobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA, El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento", son todos los subtitulos despues de GARANTÍAS, FIANZAS Y SEGUROS, los subtitulos empiezan con letras a), b), etc.. (Pueden existir varias, siempre al menos una, ejemplos de coberturas: Garantía de Cumplimiento,Garantía de Calidad y Correcto Funcionamiento de los Equipo,Garantía de pago de salarios, prestaciones sociales e indemnizaciones,Garantía de Responsabilidad Civil Extracontractual,Seguro de Accidentes Personales,Garantía de Calidad y Correcto Funcionamiento de los Equipos,).
-- DescripcionCobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA,  Todo el contenido textual asociado a esa cobertura antes de que inicie la siguiente (hasta antes del proximo subtitulo o titulo) NO CORTES EL PARRAFO
+- ContratoOrden: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Número de 10 dígitos visible en encabezado, título o texto como "ORDEN DE ENTREGA No" 
+- ContratoMarco: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO. Opcional. Puede aparecer como “Contrato Marco No” si no se encuentra dejar como string vacio 
+- NitProveedor, NombreProveedor, Objeto (Traer el párrafo, puede empezar en "el opbjeto de la presente" o "el objeto del presente"...): Extraer desde la lista //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO
+- GestionGarantiasDoc: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO. true si aparece el título de garantías y contenido debajo; false si no
+- Cobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA. El nombre de la cobertura (por ejemplo: "Garantía de Cumplimiento","Seguro de accidentes personales", "Garantía de Calidad y correcto Funcionamiento de los Equipos", "Garantía de pago de salarios", "Prestaciones sociales e indemnizaciones", "Garantía de Responsabilidad Civil Extracontractual", "Seguro de Accidentes Personales", etc.) son todos los subtítulos después de GARANTÍAS, FIANZAS Y SEGUROS, los subtítulos pueden empezar con letras a., b., c., etc.) Pueden existir varias coberturas, siempre al menos una. No unifiques las coberturas, cada una es distinta y debe considerarse así.
+- DescripcionCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA. El campo DescripcionCobertura debe contener todo el contenido asociado hasta que inicie otra cobertura (las coberturas inician por "GARANTÍA", "SEGURO" o "BUEN MANEJO"). Nunca debes cortar en medio de los párrafos, DEBES esperar al inicio de la siguiente cobertura. Nunca asumas que se terminó una cobertura si el texto sigue describiendo condiciones de duración, valor, porcentaje o uso de la garantía. Dentro de las coberturas pueden existir múltiples saltos de línea pero no te dejes confundir, la siguiente cobertura empezará por "GARANTÍA", "SEGURO" o "BUEN MANEJO", puede ser en mayúscula o minúscula. TRAE LITERALMENTE TEXTUALMENTE TODA LA COBERTURA.
 - CoberturaPara: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO "Contrato" o "Orden", según el contexto de la cobertura, si menciona que es a la orden de entrega es tipo orden, si no "contrato"
-- PorcentajeCobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA, Extraído como número (ej. "10").
-- TextoTiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, Texto si hay un plazo adicional de la cobertura, se identifica por, el plazo de vigencia mas: ejemplo: desde la fecha de constitución de la garantía de cumplimiento hasta la fecha de finalización del plazo contractual más tres (3) años;
-- TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
+- PorcentajeCobertura: //CAMPO INDEPENDIENTE DE CADA COBERTURA. Extraído como número en la cobertura. Si no encuentras un valor en porcentaje, deja este campo vacío. Usa DescripcionCobertura para realizar esta extracción. Ejemplo: "10% de la suma asegurada", "20% del valor del contrato", "30% del valor de la póliza", etc. Si no hay porcentaje explícito, deja este campo vacío.
+- TextoTiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, Puede estar redactado como “estar vigente por...”, “deberá tener vigencia de...”, “la garantía deberá estar vigente hasta...”, “estará vigente desde... hasta...” o alguna variante. Detecta también expresiones como “por tres (3) años, contados desde la fecha de aceptación”. No es necesario que se diga explícitamente “tiempo adicional”; si hay una duración clara aplicable a la cobertura, debes extraerla como texto y además extraerla como unidad (ejemplo: “3 años”) en el campo TiempoAdicionalCobertura.
+- TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc... Si no existe un valor traducible a un valor de tiempo (dígito unidad de tiempo) dejas este campo vacío. Adicional, trae siempre este valor en español.
 - DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Texto ubicado despues de VALOR TRAE TODO EL CONTEXTO, SIEMPRE TIENE EL VALOR DESCRIPCIÓN
 - ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
--  Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Si lo encuentras en letras traducirlo, si esta en valor se encuentra antes. SOLO TRAE ESTOS CASOS COP, USD, EUR.
-- PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Texto ubicado en PLAZO despues de VIGENCIA Y PLAZO DEL CONTRATO / PLAZO, traer todo el texto asociado 
-- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Transcribe la duración del contrato teniendo en cuenta el PlazoVigenciaDoc teniendo la unidad de tiempo en el texto, ejemplo si el texto menciona 3 años, traer 3 años. Traer el dato de la fecha cuando se dice "para constitución de garantías" o " El plazo para emitir ordenes de entrega será de" si no dejar vacío.
-- FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Formato dd/MM/yyyy SIEMPRE esta como la marca de tiempo (fecha) de completado (del documento), ejemplo: en Completado\nSeguridad comprobada\n17/01/2025 la fecha seria 17/01/2025 NUNCA LO DEJES VACIO.
-- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el plazoDoc más el tiempo tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
+- Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO Si lo encuentras en letras traducirlo, si esta en valor se encuentra antes. SOLO TRAE ESTOS CASOS COP, USD, EUR.
+- PlazoVigenciaDoc:///CAMPO GLOBAL PARA TODAS LAS COBERTURAS. Transcribe literalmente el primer párrafo ubicado bajo el título “VIGENCIA Y PLAZO” o similar, que hable de la vigencia y duración general del CONTRATO. No incluyas información relacionada a órdenes de entrega individuales. El párrafo puede tener múltiples oraciones y debe terminar cuando cambie de tema o haya punto aparte que hable de plazos específicos de órdenes de entrega. No tomes información de frases que mencionen "la primera orden", "orden de entrega" o "cronograma". Este campo es exclusivamente para la duración global del contrato.
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS. Extrae la duración del contrato en unidades de tiempo (por ejemplo: “3 años”) a partir del campo PlazoVigenciaDoc. Ignora frases relacionadas con plazos de órdenes de entrega o garantías. Si no se menciona un plazo en años o meses explícitamente en ese párrafo, deja este campo vacío.
+- FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO El campo lo vas a encontrar en formato dd/MM/yyyy SIEMPRE esta como la marca de tiempo (fecha) de completado (del documento). Al final de todo el documento encontrarás una tabla con título "Resumen de eventos del sobre", normalmente en la última fila encontrarás un registro llamado "Completado", deberás traer la fecha correspondiente a este registro. ejemplo: Completado Seguridad comprobada 17/01/2025 12:16:47 la fecha seria 17/01/2025 NUNCA LO DEJES VACÍO.
+- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el PlazoDoc más el tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS VIENE DEL CONTRATO 1 si se menciona “orden de inicio”; 0 si no.
 
-EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionCobertura,TextoTiempoAdicionalCobertura,DescripcionValorDoc,PlazoVigenciaDoc)
-Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
+EN NINGÚN TEXTO O DESCRIPCIÓN CORTES EL PÁRRAFO! (DescripcionCobertura, TextoTiempoAdicionalCobertura,DescripcionValorDoc, PlazoVigenciaDoc)
+⚠️ IMPORTANTE: Transcribe literalmente todo el texto asociado a cada cobertura, sin resumen, sin abreviar y sin cortar oraciones ni listas. No omitas elementos aunque parezcan repetitivos o similares. Tu trabajo es de extracción textual, no de interpretación ni síntesis.
+Tu salida debe ser un array de objetos con un objeto por cada cobertura encontrada. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
                """
     
     promptOrdenminuta = """
