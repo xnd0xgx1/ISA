@@ -31,35 +31,57 @@ class ModelService:
         logging.warning(f"Resulado OAI: {result_list}")
         if TipoDocumento != "ContratoMinuta":
             merged_list = []
-            base_body = body_list[0] if body_list else {}
-            fields_to_copy = ['NitProveedor', 'NombreProveedor']
-
-            # Si solo hay un resultado, usarlo para todos los items del body
-            if len(result_list) == 1:
+            if TipoDocumento != "SAP":
+                # Si solo hay un resultado, usarlo para todos los items del body
+                if len(result_list) == 1:
+                    for original in body_list:
+                        merged = original.copy()
+                        merged["ContratoOrden"] = single_result["ContratoOrden"]
+                        merged["ContratoMarco"] = single_result["ContratoMarco"]
+                        merged["GestionGarantiasDoc"] = single_result["GestionGarantiasDoc"]
+                        merged["CoberturaPara"] = "Orden"
+                        merged["DescripcionValorDoc"] = ""
+                        merged["ValorDoc"] = single_result["ValorDoc"]
+                        merged["Moneda"] = single_result["Moneda"]
+                        merged["PlazoVigenciaDoc"] = single_result["PlazoVigenciaDoc"]
+                        merged["PlazoDoc"] = single_result["PlazoDoc"]
+                        merged["FechaInicioCobertura"] = single_result["FechaInicioCobertura"]
+                        merged["FechaFinCobertura"] = single_result["FechaFinCobertura"]
+                        merged["OrdenInicio"] = single_result["OrdenInicio"]
+                        merged_list.append(merged)
+                        logging.warning(f"MergedList: {merged_list}")
+                        result_list_orden = self.azure_oi.Call(content=f"{merged_list}",TipoDocumento="FECHAFIN")
+                    return result_list_orden
+                else:
+                    single_result = body_list[0] or {}
+                    for original in result_list:
+                        merged = original.copy()
+                        merged["NitProveedor"] = single_result["NitProveedor"]
+                        merged["NombreProveedor"] = single_result["NombreProveedor"]
+                        merged["Objeto"] = single_result["Objeto"]
+                        merged["CoberturaPara"] = "Orden"
+                        merged_list.append(merged)
+            else:
                 single_result = result_list[0] or {}
                 for original in body_list:
                     merged = original.copy()
-                    for key, val in single_result.items():
-                        if val is not None and val != "":
-                            merged[key] = val
-                    for field in fields_to_copy:
-                        val = base_body.get(field)
-                        if val is not None and val != "":
-                            merged[field] = val
+                    merged["ContratoOrden"] = single_result["ContratoOrden"]
+                    merged["ContratoMarco"] = single_result["ContratoMarco"]
+                    merged["GestionGarantiasDoc"] = single_result["GestionGarantiasDoc"]
+                    merged["CoberturaPara"] = "Orden"
+                    merged["DescripcionValorDoc"] = ""
+                    merged["ValorDoc"] = single_result["ValorDoc"]
+                    merged["Moneda"] = single_result["Moneda"]
+                    merged["PlazoVigenciaDoc"] = single_result["PlazoVigenciaDoc"]
+                    merged["PlazoDoc"] = single_result["PlazoDoc"]
+                    merged["FechaInicioCobertura"] = single_result["FechaInicioCobertura"]
+                    merged["FechaFinCobertura"] = single_result["FechaFinCobertura"]
+                    merged["OrdenInicio"] = single_result["OrdenInicio"]
+
                     merged_list.append(merged)
-            else:
-                single_result = body_list[0] or {}
-                for original in result_list:
-                    merged = original.copy()
-                    for key, val in single_result.items():
-                        if val is not None and val != "":
-                            merged[key] = val
-                    for field in fields_to_copy:
-                        val = base_body.get(field)
-                        if val is not None and val != "":
-                            merged[field] = val
-                    merged_list.append(merged)
-            return merged_list
+                logging.warning(f"MergedList: {merged_list}")
+                result_list_sap = self.azure_oi.Call(content=f"{merged_list}",TipoDocumento="FECHAFIN")
+                return result_list_sap
         else:
             return result_list
     def processfase2Autocompletado(self,contrato):

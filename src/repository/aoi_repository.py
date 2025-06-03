@@ -127,9 +127,9 @@ Descripción de campos a extraer:
 - ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Valor ubicado despues de VALOR ANTES DE IMPUESTOS (traerlo numerico) ; si no colocar INDETERMINADO
 - Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de "MONEDA" (COP USD EUR)
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto despues de PLAZO DE LA ORDEN DE ENTREGA:
-- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS De Plazo/VigenciaDoc traer dato de plazo sea en días, meses ó años; si no dejar vacio, ejemplo si el texto menciona 3 años, traer 3 años.
+- PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS De Plazo/VigenciaDoc traer dato de plazo sea en días, meses ó años; si no dejar vacio, ejemplo si el texto menciona 3 años, traer 3 años,  VERIFICA QUE NO EXISTA explicitamente la terminación del contrato, si es así, unicamente coloca la fecha de terminación del contrato en formato dd/MM/yyyy
 - FechaInicioCobertura://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
-- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el plazoDoc más el tiempo tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC.
+- FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el PlazoDoc más el tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC, EN CASO DE QUE PLAZODOC, YA CONTENGA LA FECHA TERMINACIÓN DEL CONTRATO, UNICAMENTE AÑADE EL TIEMPOADICIONAL DE LA COBERTURA.
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
 EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionCobertura,TextoTiempoAdicionalCobertura,DescripcionValorDoc,PlazoVigenciaDoc)
@@ -167,7 +167,7 @@ Descripción de campos a extraer:
 - ValorDoc: Ubicado después del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 - Moneda: Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
 - PlazoVigenciaDoc: Texto después del titulo VIGENCIA Y PLAZO (Traer todo el párrafo)
-- PlazoDoc: Del campo PlazoVigenciaDoc traer dato de plazo sea en días, meses o años; si no dejar vacío, ejemplo si el texto menciona 3 años, traer 3 años.
+- PlazoDoc: Del campo PlazoVigenciaDoc traer dato de plazo sea en días, meses o años; si no dejar vacío, ejemplo si el texto menciona 3 años, traer 3 años,  VERIFICA QUE NO EXISTA explicitamente la terminación del contrato, si es así, unicamente coloca la fecha de terminación del contrato en formato dd/MM/yyyy
 - FechaInicioCobertura: //CAMPO GLOBAL PARA TODAS LAS COBERTURAS Formato dd/MM/yyyy teniendo el inicio de la cobertura o en su defecto el del contrato (debe venir al final como la marca de tiempo completado, ejemplo: en Completado\nSeguridad comprobada\n17/01/2025).
 - FechaFinCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA, La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el plazoDoc más el tiempo tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy.
 - OrdenInicio: Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
@@ -236,6 +236,12 @@ Descripción de campos a extraer:
 
 Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
                     """
+    
+    promptpostsap = """
+Eres un agente especializado en extracción de campos de contratos. Tu tarea es devolver SIEMPRE un arreglo de objetos JSON con los siguientes campos. NO añadas comentarios ni ningún texto fuera del JSON. NO uses comillas simples. NO pongas comas en los valores numéricos UNICAMENTE NECESITO QUE MODIFIQUES LA FechaFinCobertura ningun otro campo, 
+FechaFinCobertura es un CAMPO INDEPENDIENTE DE CADA COBERTURA (Por objeto del array), La fecha calculada del inicio de la cobertura (FechaInicioCobertura) más el PlazoDoc más el tiempo adicional (TiempoAdicionalCobertura), recuerda que FechaInicioCobertura viene en un formato dd/MM/yyyy. SIEMPRE TIENE FECHAINICIO, Y PLAZODOC, EN CASO DE QUE PLAZODOC, YA CONTENGA LA FECHA TERMINACIÓN DEL CONTRATO, UNICAMENTE AÑADE EL TIEMPOADICIONAL DE LA COBERTURA.
+Tu salida debe ser un array con un objeto. No omitas ninguna.
+               """
 
     def __init__(self, endpoint):
         self.client = AzureOpenAI(
@@ -285,6 +291,8 @@ Tu salida debe ser un array con un objeto por cada cobertura encontrada en el do
             prompt = self.promptSap
         elif TipoDocumento == "AutoContenido":
             prompt = self.promptAutocontenido
+        elif TipoDocumento == "FECHAFIN":
+            prompt = self.promptpostsap
         else:
             prompt = self.promptContratoMinuta
         logging.error(f"Tipo de prompt: {TipoDocumento}")
