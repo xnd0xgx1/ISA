@@ -225,7 +225,7 @@ Descripción de campos a extraer:
 - PorcentajeCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Extraído como número (ej. "10").
 - TextoTiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA ES el Texto si hay un plazo adicional, si hay plazo adicional TRAE TODO EL CONTENIDO DEL PLAZO ADICIONAL
 - TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de El valor del Contrato es, Trae todo el contexto NO CORTES EL PARRAFO
+- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de VALOR, TRAE TODO EL CONTEXTO NO CORTES EL PARRAFO, SIEMPRE TIENE EL VALOR DESCRIPCIÓN, puede venir como el valor de esta orden es, el valor del documento, el valor es, etc... o similares
 - ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Traducir y traer de DescripcionValorDoc, si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 - Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si lo encuentra en letras traducirlo, si esta en valor se encuentra antes. casos COP, USD, EUR
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de PLAZO  "El plazo para la ejecución", traer todo el texto asociado en ese parrafo, NO CORTES EL PARRAFO

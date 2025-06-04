@@ -34,6 +34,7 @@ class ModelService:
             if TipoDocumento != "SAP":
                 # Si solo hay un resultado, usarlo para todos los items del body
                 if len(result_list) == 1:
+                    single_result = result_list[0] or {}
                     for original in body_list:
                         merged = original.copy()
                         merged["ContratoOrden"] = single_result["ContratoOrden"]
@@ -50,7 +51,7 @@ class ModelService:
                         merged["OrdenInicio"] = single_result["OrdenInicio"]
                         merged_list.append(merged)
                         logging.warning(f"MergedList: {merged_list}")
-                        result_list_orden = self.azure_oi.Call(content=f"{merged_list}",TipoDocumento="FECHAFIN")
+                    result_list_orden = self.azure_oi.Call(content=f"{merged_list}",TipoDocumento="FECHAFIN")
                     return result_list_orden
                 else:
                     single_result = body_list[0] or {}
@@ -61,6 +62,9 @@ class ModelService:
                         merged["Objeto"] = single_result["Objeto"]
                         merged["CoberturaPara"] = "Orden"
                         merged_list.append(merged)
+                        logging.warning(f"MergedList: {merged_list}")
+                    result_list_orden = self.azure_oi.Call(content=f"{merged_list}",TipoDocumento="FECHAFIN")
+                    return result_list_orden
             else:
                 single_result = result_list[0] or {}
                 for original in body_list:
