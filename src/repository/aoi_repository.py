@@ -123,8 +123,8 @@ Descripción de campos a extraer:
 - CoberturaPara://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Orden
 - PorcentajeCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Extraído como número (ej. "10").
 - TextoTiempoAdicionalCobertura y TiempoAdicionalCobertura://CAMPO INDEPENDIENTE DE CADA COBERTURA Texto y valor con unidades si hay un plazo adicional, ejemplo del valor: 2 años, 10 meses, 1 día, etc...
-- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS texto ubicado despues de El valor del Contrato es 
-- ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Valor ubicado despues de VALOR ANTES DE IMPUESTOS (traerlo numerico) ; si no colocar INDETERMINADO
+- DescripcionValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS texto ubicado despues de El valor, El valor de contrato es, etc..(si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
+- ValorDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Valor ubicado despues de Valor, Valor es, El valor antes de impuestos etc.. es el valor del documento, Ubicado despues del titulo VALOR (si encuentra el valor en numero; si esta en letras traducirlo y poner el valor en numero; si no colocar INDETERMINADO)
 - Moneda://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto ubicado despues de "MONEDA" (COP USD EUR)
 - PlazoVigenciaDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Texto despues de PLAZO DE LA ORDEN DE ENTREGA:
 - PlazoDoc://CAMPO GLOBAL PARA TODAS LAS COBERTURAS De Plazo/VigenciaDoc traer dato de plazo sea en días, meses ó años; si no dejar vacio, ejemplo si el texto menciona 3 años, traer 3 años,  VERIFICA QUE NO EXISTA explicitamente la terminación del contrato, si es así, unicamente coloca la fecha de terminación del contrato en formato dd/MM/yyyy
