@@ -33,7 +33,7 @@ class ModelService:
             merged_list = []
             if TipoDocumento != "SAP":
                 # Si solo hay un resultado, usarlo para todos los items del body
-                if len(result_list) == 1:
+                if len(result_list) <= len(body_list):
                     single_result = result_list[0] or {}
                     for original in body_list:
                         merged = original.copy()

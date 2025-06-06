@@ -85,7 +85,7 @@ Eres un agente especializado en extracción de campos de ordenes. Tu tarea es de
 
 Los subtítulos de las coberturas pueden empezar con letras (a), b), c)...), guiones o incluso ser párrafos separados. DEBES detectar cada cobertura como un bloque de contenido que incluya descripción, porcentaje, duración, y beneficiario si está disponible. 
 
-⚠️ Si el texto tiene más de una cobertura, DEVUELVE cada una como un objeto separado dentro del array. NO omitas ninguna.
+⚠️ Si el texto tiene más de una cobertura, DEVUELVE cada una como un objeto separado dentro del array. NO omitas ninguna PUEDE NO CONTENER NINGUNA COBERTURA, en su caso  unicamente devuelve los campos globales en un solo objeto del array.
 
 Formato de salida esperado (ejemplo, no copiar literalmente):
 [
@@ -133,7 +133,7 @@ Descripción de campos a extraer:
 - OrdenInicio://CAMPO GLOBAL PARA TODAS LAS COBERTURAS Si en el campo Plazo/VigenciaDoc se indica que tiene orden de inicio colocar SI, de lo contrario NO 
 
 EN NINGUN TEXTO O DESCRIPCIÓN CORTES EL PARRAFO! (DescripcionCobertura,TextoTiempoAdicionalCobertura,DescripcionValorDoc,PlazoVigenciaDoc)
-Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno.
+Tu salida debe ser un array con un objeto por cada cobertura encontrada en el documento. No omitas ninguna. Si hay 4, devuelves 4 objetos. Si solo hay 1, devuelves uno, Si no tiene Coberturas solo devuelve un objeto del array con los campos globales.
                """
     promptSap = """
 Eres un agente especializado en extracción de campos de contratos. Tu tarea es devolver SIEMPRE un arreglo de objetos JSON con los siguientes campos. NO añadas comentarios ni ningún texto fuera del JSON. NO uses comillas simples. NO pongas comas en los valores numéricos.
